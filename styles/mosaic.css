@@ -1,0 +1,162 @@
+/* Poki reference mosaic: responsive column counts and featured tile positions. */
+@media (min-width:111px) and (max-width:770.9px){
+  :root { --grid-columns:6; }
+  .mosaic { grid-template-areas:"...  ip0  ip0  ip0  ip1  ip1" "...  ip0  ip0  ip0  ip1  ip1" "...  ip0  ip0  ip0  ...  ..." "...  ...  ip2  ip2  ...  ..." "...  ...  ip2  ip2  ip3  ip3" "...  ...  ...  ...  ip3  ip3" "ip4  ip4  ...  ...  ...  ..." "ip4  ip4  ...  ip5  ip5  ..." "...  ...  ...  ip5  ip5  ..." "...  ip6  ip6  ...  ...  ..." "...  ip6  ip6  ...  ...  ..." "...  ...  ip7  ip7  ip7  ..." "...  ...  ip7  ip7  ip7  ..." "...  ...  ip7  ip7  ip7  ..." "...  ...  ...  ...  ip8  ip8" "...  ...  ...  ...  ip8  ip8" "ip9  ip9  ...  ip10 ip10 ..." "ip9  ip9  ...  ip10 ip10 ..." "...  ...  ...  ...  ...  ..." "...  ip11 ip11 ...  ...  ..." "...  ip11 ip11 ip12 ip12 ip12" "...  ...  ...  ip12 ip12 ip12" "...  ...  ...  ip12 ip12 ip12" "...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ..." "...  ip13 ip13 ...  ...  ..." "...  ip13 ip13 ...  ...  ..." "...  ...  ip14 ip14 ...  ..." "ip15 ip15 ip14 ip14 ...  ..." "ip15 ip15 ...  ...  ip16 ip16" "...  ...  ...  ...  ip16 ip16" }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-16 { grid-area: ip16; }
+}
+@media (min-width:771px) and (max-width:990.9px){
+  :root { --grid-columns:7; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ip1  ip1" "...  ...  ip0  ip0  ip0  ip1  ip1" "ip2  ip2  ip0  ip0  ip0  ...  ..." "ip2  ip2  ...  ip3  ip3  ...  ..." "...  ...  ...  ip3  ip3  ip4  ip4" "...  ...  ...  ...  ...  ip4  ip4" "ip5  ip5  ip5  ...  ...  ...  ..." "ip5  ip5  ip5  ...  ip6  ip6  ..." "ip5  ip5  ip5  ...  ip6  ip6  ..." "...  ...  ip7  ip7  ...  ...  ..." "...  ...  ip7  ip7  ...  ...  ..." "...  ...  ...  ip8  ip8  ip8  ..." "...  ...  ...  ip8  ip8  ip8  ..." "ip9  ip9  ...  ip8  ip8  ip8  ..." "ip9  ip9  ...  ...  ...  ip10 ip10" "...  ...  ...  ...  ...  ip10 ip10" "ip11 ip11 ip11 ...  ip13 ip13 ..." "ip11 ip11 ip11 ...  ip13 ip13 ..." "ip11 ip11 ip11 ...  ...  ...  ..." "...  ...  ip14 ip14 ...  ...  ..." "...  ...  ip14 ip14 ip12 ip12 ip12" "...  ...  ...  ...  ip12 ip12 ip12" "...  ...  ...  ...  ip12 ip12 ip12" "ip15 ip15 ...  ...  ...  ...  ..." "ip15 ip15 ...  ...  ...  ...  ..." "...  ...  ip16 ip16 ...  ...  ..." "...  ...  ip16 ip16 ...  ...  ..." "...  ...  ...  ip17 ip17 ...  ..." "...  ip18 ip18 ip17 ip17 ...  ..." "...  ip18 ip18 ...  ...  ip19 ip19" "...  ...  ...  ...  ...  ip19 ip19" }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-16 { grid-area: ip16; }
+  .mosaic .featured-17 { grid-area: ip17; }
+  .mosaic .featured-18 { grid-area: ip18; }
+  .mosaic .featured-19 { grid-area: ip19; }
+}
+@media (min-width:991px) and (max-width:1210.9px){
+  :root { --grid-columns:9; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ip3  ip3  ip4  ip4" "ip2  ip2  ip0  ip0  ip0  ip3  ip3  ip4  ip4" "ip2  ip2  ip0  ip0  ip0  ip1  ip1  ip1  ..." "...  ...  ...  ip6  ip6  ip1  ip1  ip1  ..." "...  ip5  ip5  ip6  ip6  ip1  ip1  ip1  ..." "...  ip5  ip5  ip8  ip8  ...  ip9  ip9  ..." "...  ip7  ip7  ip8  ip8  ...  ip9  ip9  ..." "...  ip7  ip7  ...  ...  ...  ...  ...  ..." "...  ...  ip10 ip10 ip10 ...  ip13 ip13 ..." "...  ...  ip10 ip10 ip10 ...  ip13 ip13 ..." "...  ...  ip10 ip10 ip10 ...  ...  ...  ..." "ip14 ip14 ...  ...  ...  ...  ...  ...  ..." "ip14 ip14 ...  ...  ...  ...  ip11 ip11 ip11" "...  ...  ...  ...  ...  ...  ip11 ip11 ip11" "...  ip15 ip15 ...  ...  ...  ip11 ip11 ip11" "...  ip15 ip15 ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ip12 ip12 ip12 ...  ..." "...  ...  ...  ...  ip12 ip12 ip12 ...  ..." "...  ip16 ip16 ...  ip12 ip12 ip12 ...  ..." "...  ip16 ip16 ip17 ip17 ...  ...  ...  ..." "...  ...  ...  ip17 ip17 ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ...  ip18 ip18" "...  ...  ...  ...  ...  ...  ...  ip18 ip18" }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-16 { grid-area: ip16; }
+  .mosaic .featured-17 { grid-area: ip17; }
+  .mosaic .featured-18 { grid-area: ip18; }
+}
+@media (min-width:1211px) and (max-width:1320.9px){
+  :root { --grid-columns:11; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ip3  ip3  ip4  ip4  ip5  ip5" "ip2  ip2  ip0  ip0  ip0  ip3  ip3  ip4  ip4  ip5  ip5" "ip2  ip2  ip0  ip0  ip0  ip1  ip1  ip1  ...  ip6  ip6" "...  ...  ...  ...  ...  ip1  ip1  ip1  ...  ip6  ip6" "...  ip7  ip7  ip8  ip8  ip1  ip1  ip1  ...  ip9  ip9" "...  ip7  ip7  ip8  ip8  ...  ...  ...  ...  ip9  ip9" "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ip10 ip10 ip10 ...  ..." "ip11 ip11 ...  ...  ...  ...  ip10 ip10 ip10 ...  ..." "ip11 ip11 ip12 ip12 ...  ...  ip10 ip10 ip10 ...  ..." "...  ...  ip12 ip12 ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ip13 ip13 ip13 ...  ...  ...  ...  ..." "...  ...  ...  ip13 ip13 ip13 ...  ip14 ip14 ...  ..." "...  ...  ...  ip13 ip13 ip13 ...  ip14 ip14 ...  ..." "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ip15 ip15 ...  ...  ...  ...  ...  ...  ip16 ip16" "...  ip15 ip15 ip17 ip17 ...  ...  ...  ...  ip16 ip16" "...  ...  ...  ip17 ip17 ...  ...  ...  ...  ...  ..." }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-16 { grid-area: ip16; }
+  .mosaic .featured-17 { grid-area: ip17; }
+}
+@media (min-width:1321px) and (max-width:1540.9px){
+  :root { --grid-columns:12; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ip3  ip3  ip4  ip4  ip5  ip5  ..." "ip2  ip2  ip0  ip0  ip0  ip3  ip3  ip4  ip4  ip5  ip5  ..." "ip2  ip2  ip0  ip0  ip0  ip1  ip1  ip1  ...  ip6  ip6  ..." "...  ...  ...  ...  ...  ip1  ip1  ip1  ...  ip6  ip6  ..." "...  ip7  ip7  ip8  ip8  ip1  ip1  ip1  ...  ip9  ip9  ..." "...  ip7  ip7  ip8  ip8  ...  ...  ...  ...  ip9  ip9  ..." "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ...  ip10 ip10 ...  ...  ..." "ip11 ip11 ...  ...  ...  ...  ...  ip10 ip10 ...  ...  ..." "ip11 ip11 ip12 ip12 ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ip12 ip12 ...  ...  ...  ...  ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ip13 ip13 ...  ...  ...  ..." "...  ...  ...  ...  ...  ...  ip13 ip13 ...  ...  ...  ..." "...  ip14 ip14 ...  ...  ...  ...  ...  ...  ...  ...  ..." "...  ip14 ip14 ...  ...  ...  ...  ...  ...  ip15 ip15 ..." "...  ...  ...  ...  ...  ...  ...  ...  ...  ip15 ip15 ..." }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-15 { grid-area: ip15; }
+}
+@media (min-width:1541px) and (max-width:1870.9px){
+  :root { --grid-columns:14; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ip4  ip4  ...  ...  ...  ...  ...  ip5  ip5" "...  ...  ip0  ip0  ip0  ip4  ip4  ...  ip2  ip2  ip2  ...  ip5  ip5" "ip3  ip3  ip0  ip0  ip0  ...  ...  ...  ip2  ip2  ip2  ...  ip6  ip6" "ip3  ip3  ...  ...  ...  ip1  ip1  ip1  ip2  ip2  ip2  ...  ip6  ip6" "ip7  ip7  ...  ip8  ip8  ip1  ip1  ip1  ip9  ip9  ip10 ip10 ...  ..." "ip7  ip7  ...  ip8  ip8  ip1  ip1  ip1  ip9  ip9  ip10 ip10 ...  ..." "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ... " "...  ...  ...  ...  ...  ...  ...  ...  ip11 ip11 ip11 ...  ...  ... " "ip12 ip12 ...  ...  ...  ...  ...  ...  ip11 ip11 ip11 ...  ...  ... " "ip12 ip12 ...  ...  ...  ...  ...  ...  ip11 ip11 ip11 ...  ...  ... " "...  ...  ip13 ip13 ...  ...  ...  ...  ...  ...  ...  ...  ...  ... " "...  ...  ip13 ip13 ...  ...  ...  ...  ...  ...  ...  ...  ...  ... " "...  ...  ...  ...  ...  ...  ip14 ip14 ...  ...  ...  ip15 ip15 ip15" "ip16 ip16 ...  ...  ...  ...  ip14 ip14 ...  ...  ...  ip15 ip15 ip15" "ip16 ip16 ...  ...  ...  ...  ...  ...  ...  ...  ...  ip15 ip15 ip15" }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-16 { grid-area: ip16; }
+}
+@media (min-width:1871px){
+  :root { --grid-columns:17; }
+  .mosaic { grid-template-areas:"...  ...  ip0  ip0  ip0  ...  ...  ...  ...  ...  ...  ...  ...  ip7  ip7  ip8  ip8" "...  ...  ip0  ip0  ip0  ip4  ip4  ip5  ip5  ip2  ip2  ip2  ...  ip7  ip7  ip8  ip8" "...  ...  ip0  ip0  ip0  ip4  ip4  ip5  ip5  ip2  ip2  ip2  ip6  ip6  ip3  ip3  ip3" "ip9  ip9  ip10 ip10 ip11 ip11 ip1  ip1  ip1  ip2  ip2  ip2  ip6  ip6  ip3  ip3  ip3" "ip9  ip9  ip10 ip10 ip11 ip11 ip1  ip1  ip1  ip12 ip12 ip13 ip13 ...  ip3  ip3  ip3" "...  ip14 ip14 ip15 ip15 ...  ip1  ip1  ip1  ip12 ip12 ip13 ip13 ip16 ip16 ip17 ip17" "...  ip14 ip14 ip15 ip15 ...  ip18 ip18 ip19 ip19 ip20 ip20 ...  ip16 ip16 ip17 ip17" "...  ...  ...  ...  ...  ...  ip18 ip18 ip19 ip19 ip20 ip20 ...  ...  ...  ...  ... " "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ... " "ip22 ip22 ...  ...  ...  ...  ...  ...  ...  ...  ip21 ip21 ip21 ...  ...  ...  ... " "ip22 ip22 ...  ...  ...  ...  ip24 ip24 ...  ...  ip21 ip21 ip21 ...  ...  ...  ... " "...  ...  ip23 ip23 ...  ...  ip24 ip24 ...  ...  ip21 ip21 ip21 ...  ...  ...  ... " "...  ...  ip23 ip23 ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ip25 ip25" "...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ip25 ip25" }
+  .mosaic .featured-0 { grid-area: ip0; }
+  .mosaic .featured-7 { grid-area: ip7; }
+  .mosaic .featured-8 { grid-area: ip8; }
+  .mosaic .featured-4 { grid-area: ip4; }
+  .mosaic .featured-5 { grid-area: ip5; }
+  .mosaic .featured-2 { grid-area: ip2; }
+  .mosaic .featured-6 { grid-area: ip6; }
+  .mosaic .featured-3 { grid-area: ip3; }
+  .mosaic .featured-9 { grid-area: ip9; }
+  .mosaic .featured-10 { grid-area: ip10; }
+  .mosaic .featured-11 { grid-area: ip11; }
+  .mosaic .featured-1 { grid-area: ip1; }
+  .mosaic .featured-12 { grid-area: ip12; }
+  .mosaic .featured-13 { grid-area: ip13; }
+  .mosaic .featured-14 { grid-area: ip14; }
+  .mosaic .featured-15 { grid-area: ip15; }
+  .mosaic .featured-16 { grid-area: ip16; }
+  .mosaic .featured-17 { grid-area: ip17; }
+  .mosaic .featured-18 { grid-area: ip18; }
+  .mosaic .featured-19 { grid-area: ip19; }
+  .mosaic .featured-20 { grid-area: ip20; }
+  .mosaic .featured-22 { grid-area: ip22; }
+  .mosaic .featured-21 { grid-area: ip21; }
+  .mosaic .featured-24 { grid-area: ip24; }
+  .mosaic .featured-23 { grid-area: ip23; }
+  .mosaic .featured-25 { grid-area: ip25; }
+}

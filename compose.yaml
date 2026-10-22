@@ -1,0 +1,24 @@
+name: ant-play
+
+services:
+  web:
+    image: ${APP_IMAGE:-ant-play:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${BIND_ADDRESS:-0.0.0.0}:${APP_PORT:-3100}:${PORT:-3000}"
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: "${PORT:-3000}"
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      NEXT_TELEMETRY_DISABLED: "1"
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
