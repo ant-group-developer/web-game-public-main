@@ -3,8 +3,13 @@ import type { ReactNode } from 'react';
 import { SiteNavigation } from '@/components/site-navigation';
 import { SiteFooter } from '@/components/site-footer';
 import '@/styles/globals.css';
+import { siteUrl, siteDescription } from '@/helpers/seo';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
+  openGraph: { type: 'website', locale: 'en_US', siteName: 'ANT Play', title: 'ANT Play — Free Online Games', description: siteDescription, images: [{ url: '/seo/ant-play-og.jpg', width: 1200, height: 630, alt: 'ANT Play — Find your next favorite game' }] },
+  twitter: { card: 'summary_large_image', title: 'ANT Play — Free Online Games', description: siteDescription, images: ['/seo/ant-play-og.jpg'] },
   title: { default: 'ANT Play — Free Online Games', template: '%s | ANT Play' },
   description: 'Your next favorite game is waiting. Discover action, racing, puzzle and multiplayer games on ANT Play.',
   applicationName: 'ANT Play',

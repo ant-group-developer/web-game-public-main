@@ -9,6 +9,9 @@ COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 
 FROM base AS builder
+ARG SITE_URL=http://localhost:3100
+ARG NEXT_PUBLIC_APPLE_WORM_EMBED_URL=https://apple-worm.antfootage.net/embed/apple-worm
+ENV SITE_URL=$SITE_URL NEXT_PUBLIC_APPLE_WORM_EMBED_URL=$NEXT_PUBLIC_APPLE_WORM_EMBED_URL
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build

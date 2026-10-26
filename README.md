@@ -113,3 +113,7 @@ Khi có `embedUrl`, trang game hiển thị nút **Play now**, tải iframe sau 
 Đổi tên `ANT Play` trong `app/layout.tsx`, `components/site-footer.tsx` và nội dung trang chủ khi chốt tên thương hiệu.
 
 Xem [SOURCE-CREDITS.md](SOURCE-CREDITS.md) để biết nguồn tài nguyên tham khảo.
+
+
+## Apple Worm và SEO
+Xem [APPLE-WORM-DEPLOY.md](./APPLE-WORM-DEPLOY.md) để cấu hình domain, Docker, ảnh SEO và route iframe.
