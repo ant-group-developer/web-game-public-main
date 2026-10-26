@@ -37,7 +37,8 @@ export function GameDetail({ game }: { game: Game }) {
         {isCityBloxx ? <CityBloxxPlayer onPlay={() => setPlaying(true)} /> : playing && game.embedUrl ? <iframe src={game.embedUrl} title={game.title} onLoad={(event) => event.currentTarget.focus()} allow="fullscreen; autoplay; gamepad" allowFullScreen sandbox="allow-scripts allow-same-origin allow-pointer-lock" /> : <>
           <Image src={game.image} alt="" fill sizes="(max-width: 990px) 100vw, 960px" unoptimized className="player-background" />
           <div className="player-launch"><Image src={game.image} alt={game.title} width={154} height={154} unoptimized className="launch-image" />{isAppleWorm ? <h2>{game.title}</h2> : <h1>{game.title}</h1>}
-            {game.embedUrl ? <button className="play-button" onClick={() => setPlaying(true)}><Play size={22} fill="currentColor" /> Play now</button> : <a className="play-button" href={game.sourcePage} target="_blank" rel="noopener noreferrer"><Play size={22} fill="currentColor" /> Play on Poki <ExternalLink size={16} /></a>}
+            {game.embedUrl ? <button className="play-button" onClick={() => setPlaying(true)}><Play size={22} fill="currentColor" /> {isAppleWorm ? 'Chơi ngay' : 'Play now'}</button> : <a className="play-button" href={game.sourcePage} target="_blank" rel="noopener noreferrer"><Play size={22} fill="currentColor" /> Play on Poki <ExternalLink size={16} /></a>}
+            {isAppleWorm && <p>Chơi trực tiếp trên ANT Play · Tiếng Việt</p>}
             {!game.embedUrl && <p>Opens the original game in a new tab</p>}
           </div>
         </>}

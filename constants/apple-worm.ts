@@ -1,5 +1,12 @@
 import type { Game } from '@/types/game';
-export const appleWormDetails: Partial<Game> = {
+export const appleWorm: Game = {
+  slug: 'apple-worm',
+  title: 'Apple Worm',
+  image: '/games/apple-worm.jpg',
+  categories: ['puzzle', 'skill', 'adventure'],
+  featured: 1,
+  isNew: true,
+  sourcePage: 'https://apple-worm.antfootage.net/games/apple-worm',
   embedUrl: process.env.NEXT_PUBLIC_APPLE_WORM_EMBED_URL || 'https://apple-worm.antfootage.net/embed/apple-worm',
   language: 'vi',
   tagline: 'Ăn táo, dài thêm và tìm lối thoát',
