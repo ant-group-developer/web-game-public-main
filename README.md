@@ -80,14 +80,24 @@ public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 
 | Game | Trang | URL iframe mặc định | Env (đọc lúc build) |
 |---|---|---|---|
-| City Bloxx | /games/city-bloxx | https://citybloxx.antfootage.net/embed?lang=vi&screen=quick | NEXT_PUBLIC_CITY_BLOXX_EMBED_URL |
+| City Bloxx | /games/city-bloxx | https://citybloxx.antfootage.net/embed?screen=quick | NEXT_PUBLIC_CITY_BLOXX_EMBED_URL |
 | Apple Worm | /games/apple-worm | https://apple-worm.antfootage.net/embed/apple-worm | NEXT_PUBLIC_APPLE_WORM_EMBED_URL |
 | Cờ Cá Ngựa | /games/co-ca-ngua | https://ludo.antfootage.net/ | NEXT_PUBLIC_LUDO_EMBED_URL |
 | Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
+| Cờ Caro (Infinite XO) | /games/co-caro | https://xo.antfootage.net/ | NEXT_PUBLIC_XO_EMBED_URL |
 
 Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
 
-Thêm game mới: thêm một mục vào `constants/games.ts` + ảnh vuông vào `public/games/`. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
+## Đa ngôn ngữ (VI / EN)
+
+- Nút **VI | EN** trên header. Lựa chọn lưu ở `localStorage` (`ant-lang`), mặc định tiếng Việt. Server luôn render tiếng Việt (SEO), trình duyệt đổi sang ngôn ngữ đã chọn sau khi tải.
+- Chữ giao diện nằm ở `constants/i18n.ts`; chữ của từng game nằm trong `text.vi` / `text.en` ở `constants/games.ts`.
+- Đồng bộ với game:
+  - Khi mở game, portal thêm `?lang=vi|en` vào URL iframe. Không cần ghi `lang` trong env.
+  - Đổi ngôn ngữ khi game đang mở thì portal gửi `postMessage({ type: 'ant-play:locale', locale })` xuống iframe, game đổi ngay mà không tải lại.
+  - City Bloxx, Cờ Cá Ngựa, Block Puzzle và Cờ Caro hỗ trợ cả hai cách trên. Apple Worm là bản Flash đóng gói sẵn, chữ nằm trong file game nên không đổi được.
+
+Thêm game mới: thêm một mục vào `constants/games.ts` (kèm `text.vi` và `text.en`) + ảnh vuông vào `public/games/`. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
 
 ## Apple Worm và SEO
 Xem [APPLE-WORM-DEPLOY.md](./APPLE-WORM-DEPLOY.md).

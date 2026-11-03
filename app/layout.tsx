@@ -23,7 +23,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="vi">
       <body>
-        <a href="#main" className="skip-link">Vào nội dung</a>
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />

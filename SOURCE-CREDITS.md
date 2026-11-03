@@ -4,6 +4,7 @@
 - Apple Worm: game do Gibton tạo. Ảnh `public/games/apple-worm.jpg`, `public/seo/apple-worm-*` từ bản game đã đóng gói trong project Apple Worm.
 - Cờ Cá Ngựa: `public/games/ludo.svg` và `public/seo/ludo-og.png` copy từ `ludo-online-main/app/icon.svg` và `app/opengraph-image.png`.
 - Block Puzzle: `public/games/block-puzzle.svg` vẽ riêng cho portal (bàn 8×8).
+- Cờ Caro (Infinite XO): `public/games/xo.svg` vẽ riêng cho portal theo bảng màu neon của game. Game chạy tại https://xo.antfootage.net/.
 - Logo / favicon: do người dùng cung cấp trong `assets/`.
 - Font Nunito: Google Fonts, SIL Open Font License (`public/fonts/OFL.txt`).
 - Icon UI: Lucide (ISC) qua `lucide-react`.

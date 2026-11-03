@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx=".5" cy=".3" r=".85"><stop stop-color="#2a0f5e"/><stop offset="1" stop-color="#0a0420"/></radialGradient>
+    <pattern id="grid" width="51.2" height="51.2" patternUnits="userSpaceOnUse"><path d="M51.2 0H0V51.2" fill="none" stroke="#8a6bff" stroke-opacity=".28" stroke-width="2"/></pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#grid)"/>
+
+  <!-- quân nhỏ trên lưới -->
+  <g fill="none" stroke-linecap="round" stroke-width="7" filter="url(#glowSm)">
+    <g stroke="#1ff4ff"><circle cx="76.8" cy="76.8" r="15"/><circle cx="435.2" cy="128" r="15"/><circle cx="128" cy="435.2" r="15"/><circle cx="384" cy="435.2" r="15"/></g>
+    <g stroke="#ff2bd6"><path d="M420 405l30 30M450 405l-30 30"/><path d="M62 266l30 30M92 266l-30 30"/><path d="M369 62l30 30M399 62l-30 30"/></g>
+  </g>
+
+  <!-- 5 quân thẳng hàng + vạch thắng -->
+  <g fill="none" stroke="#ff2bd6" stroke-linecap="round" stroke-width="8" filter="url(#glowSm)" opacity=".9">
+    <path d="M140.6 166l26 26M166.6 166l-26 26"/><path d="M191.8 166l26 26M217.8 166l-26 26"/><path d="M243.0 166l26 26M269.0 166l-26 26"/><path d="M294.2 166l26 26M320.2 166l-26 26"/><path d="M345.4 166l26 26M371.4 166l-26 26"/>
+  </g>
+  <path d="M128 179H384" stroke="#ffd23a" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- X và O lớn -->
+  <g fill="none" stroke-linecap="round" filter="url(#glow)">
+    <path d="M118 262l108 108M226 262l-108 108" stroke="#ff2bd6" stroke-width="30"/>
+    <circle cx="340" cy="316" r="58" stroke="#1ff4ff" stroke-width="30"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke="#fff" stroke-opacity=".75">
+    <path d="M118 262l108 108M226 262l-108 108" stroke-width="8"/>
+    <circle cx="340" cy="316" r="58" stroke-width="8"/>
+  </g>
+  <!-- ∞ nhỏ: bàn cờ vô hạn -->
+  <path d="M226 452c-14-20-42-20-42 0s28 20 42 0 42-20 42 0-28 20-42 0z" fill="none" stroke="#ffd23a" stroke-width="9" stroke-linecap="round" filter="url(#glowSm)" transform="translate(30 0)"/>
+</svg>

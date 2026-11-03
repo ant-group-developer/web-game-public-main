@@ -40,6 +40,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
 body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px)); }
 .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-title); font-size: 26px; font-weight: 800; line-height: 1; }
 .brand b { color: var(--brand); font-weight: 800; }
+.lang-switch { margin-left: auto; display: flex; padding: 4px; gap: 2px; border-radius: 14px; background: var(--bg); }
+.lang-switch button { min-width: 44px; height: 36px; padding: 0 10px; border-radius: 10px; font-family: var(--font-title); font-size: 15px; font-weight: 800; color: var(--muted); transition: background .15s, color .15s; }
+.lang-switch button:hover { color: var(--ink); }
+.lang-switch button[aria-pressed="true"] { background: var(--surface); color: var(--brand); box-shadow: 0 2px 0 var(--card-shadow); }
 
 /* ── Chung ──────────────────────────────────────────── */
 .page { width: var(--page); margin: 0 auto; padding: 32px 0 24px; }
@@ -81,7 +85,8 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
 @keyframes pop-in { from { opacity: 0; transform: rotate(-4deg) scale(.9); } to { opacity: 1; transform: rotate(3deg) scale(1); } }
 
 /* ── Thẻ game ───────────────────────────────────────── */
-.game-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+/* Tự chia cột theo bề ngang: 5 game nằm vừa một hàng trên desktop. */
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; }
 .game-card { display: flex; flex-direction: column; gap: 2px; }
 .game-card-art { position: relative; display: block; aspect-ratio: 1; margin-bottom: 10px; border-radius: 28px; overflow: hidden; background: #dce5f1; box-shadow: 0 4px 0 var(--card-shadow); transition: transform .2s cubic-bezier(.2, .8, .2, 1), box-shadow .2s; }
 .game-card-art img { object-fit: cover; }
@@ -156,7 +161,7 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
 @media (max-width: 900px) {
   .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .game-layout { grid-template-columns: 1fr; }
-  .more-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .more-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
   .more-games { margin-top: 28px; }
 }
 
