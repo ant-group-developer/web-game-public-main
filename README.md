@@ -1,6 +1,6 @@
 # ANT Play
 
-Base Next.js App Router + TypeScript + Tailwind CSS cho website game, tham khảo cấu trúc `ag-release-client` và giao diện Poki. Logo/favicons sử dụng các file gốc trong `assets`.
+Portal game Next.js (App Router + TypeScript + Tailwind) cho 4 game của ANT: City Bloxx, Apple Worm, Cờ Cá Ngựa, Block Puzzle. Mỗi game chạy trong iframe từ domain riêng.
 
 ## Chạy project
 
@@ -56,7 +56,7 @@ docker compose down           # Dừng và gỡ container của project
 
 Container có healthcheck tại `/api/health`, tự khởi động lại khi lỗi và chạy bằng user không phải root. Image production dùng Next.js standalone, kèm đầy đủ thumbnail, favicon và font local. `.env`, cache và `node_modules` trên máy host được loại khỏi build context.
 
-Nếu có domain HTTPS, cấu hình reverse proxy trỏ về `127.0.0.1:APP_PORT`. City Bloxx tự truyền origin thực của website vào `/embed`, nên không cần sửa origin trong source khi đổi domain.
+Nếu có domain HTTPS, cấu hình reverse proxy trỏ về `127.0.0.1:APP_PORT`.
 
 Có thể dùng file env riêng:
 
@@ -67,53 +67,27 @@ docker compose --env-file .env.production up -d --build
 ## Cấu trúc
 
 ```text
-app/                   App Router, metadata, trang chủ, trang game, 404
-components/            Navigation, search, game card, categories, footer
-modules/home/          Lưới game và lọc danh mục
-modules/games/         Trang chi tiết và khung chơi game
-constants/games.json   Danh sách game và đường dẫn thumbnail local
-constants/games.ts     Điểm cấu hình dữ liệu game
-constants/categories.ts Danh mục và icon Lucide
-hooks/use-library.ts   Yêu thích và lịch sử xem bằng localStorage
-helpers/tailwind.ts    cn(): clsx + tailwind-merge, theo source tham khảo
-styles/               Tailwind, global styles, responsive mosaic
-public/brand/          Logo và favicon được copy từ assets/
-public/games/          Thumbnail local
-public/fonts/          Font Nunito local
+app/                     Trang chủ, /games/[slug], 404, sitemap, robots
+components/              Header (chỉ logo), footer, thẻ game
+modules/home/            Banner game nổi bật, "Chơi gần đây" (localStorage)
+modules/games/           Trang chơi: iframe tự tải, thanh tên + toàn màn hình dưới khung, "Chơi thêm"
+constants/games.ts       Danh sách 4 game + URL embed
+public/games/            Ảnh bìa (vuông) của từng game
+public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 ```
 
-Giữ cách tổ chức `app`, `components`, `modules`, `constants`, `helpers`, `hooks`, `types`, `styles` và alias `@/*` của source tham khảo. Base dùng Next.js 16 / React 19, Tailwind 3 và Lucide; không kéo theo phần CMS, authentication hoặc cấu hình nội bộ của project nhạc.
+## Game
 
-## Chức năng
+| Game | Trang | URL iframe mặc định | Env (đọc lúc build) |
+|---|---|---|---|
+| City Bloxx | /games/city-bloxx | https://citybloxx.antfootage.net/embed?lang=vi&screen=quick | NEXT_PUBLIC_CITY_BLOXX_EMBED_URL |
+| Apple Worm | /games/apple-worm | https://apple-worm.antfootage.net/embed/apple-worm | NEXT_PUBLIC_APPLE_WORM_EMBED_URL |
+| Cờ Cá Ngựa | /games/co-ca-ngua | https://ludo.antfootage.net/ | NEXT_PUBLIC_LUDO_EMBED_URL |
+| Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
 
-- Trang chủ mosaic: ô game lớn/nhỏ, hover title, badge và responsive.
-- Search panel có tìm kiếm tức thời, trạng thái không có kết quả, thao tác Escape/Tab.
-- Lọc danh mục qua URL `/?category=car`, `/?category=puzzle`, `/?category=new`.
-- Trang `/games/[slug]`, danh sách liên quan và breadcrumb.
-- Yêu thích và lịch sử xem lưu riêng trên trình duyệt; không cần backend.
-- Logo, favicon nhiều kích thước, metadata từng game, trang 404.
+Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
 
-## Gắn game thật hoặc API
-
-**City Bloxx đã được tích hợp:** ô nổi bật đầu tiên trên trang chủ, trang `/games/city-bloxx`, cấu hình tại `constants/city-bloxx.ts`. Bấm **Chơi ngay** để tải `https://citybloxx.antfootage.net/embed?lang=vi&screen=quick`; iframe truyền thêm `parentOrigin` theo origin thực của website. Có chọn 7 chế độ, bật/tắt tiếng, fullscreen và nhận điểm qua bridge `city-bloxx:portal` v1. Tin nhắn được kiểm tra cả origin lẫn cửa sổ iframe. Game tự quản lý lưu tiến trình/tài khoản; portal không truyền token SSO.
-
-Các game còn lại là dữ liệu giao diện tham khảo. Khi chưa cấu hình `embedUrl`, nút **Play on Poki** mở trang game gốc trong tab mới. Project không chứa engine hoặc source của các game đó.
-
-Thêm URL game được phép nhúng vào `constants/games.ts` hoặc thay dữ liệu từ API:
-
-```ts
-export const games: Game[] = catalog.map((game) => ({
-  ...game,
-  embedUrl: game.slug === 'your-game' ? '/play/your-game/index.html' : undefined,
-}));
-```
-
-Khi có `embedUrl`, trang game hiển thị nút **Play now**, tải iframe sau khi bấm và hỗ trợ fullscreen. Có thể đặt game HTML5 của bạn trong `public/play/`.
-
-Đổi tên `ANT Play` trong `app/layout.tsx`, `components/site-footer.tsx` và nội dung trang chủ khi chốt tên thương hiệu.
-
-Xem [SOURCE-CREDITS.md](SOURCE-CREDITS.md) để biết nguồn tài nguyên tham khảo.
-
+Thêm game mới: thêm một mục vào `constants/games.ts` + ảnh vuông vào `public/games/`. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
 
 ## Apple Worm và SEO
-Xem [APPLE-WORM-DEPLOY.md](./APPLE-WORM-DEPLOY.md) để cấu hình domain, Docker, ảnh SEO và route iframe.
+Xem [APPLE-WORM-DEPLOY.md](./APPLE-WORM-DEPLOY.md).

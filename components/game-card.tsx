@@ -1,15 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
-import { cn } from '@/helpers/tailwind';
+import { Play } from 'lucide-react';
 import type { Game } from '@/types/game';
 
-export function GameCard({ game, mosaic = false, priority = false }: { game: Game; mosaic?: boolean; priority?: boolean }) {
+export function GameCard({ game, priority = false }: { game: Game; priority?: boolean }) {
   return (
-    <Link href={`/games/${game.slug}`} title={game.title} className={cn('game-card', mosaic && game.featured >= 0 && `featured-${game.featured}`)}>
-      <Image src={game.image} alt={game.title} fill sizes={mosaic && game.featured >= 0 ? '(max-width: 660px) 33vw, 314px' : '(max-width: 660px) 33vw, 204px'} priority={priority} unoptimized className="object-cover" />
-      {game.isNew && <span className="new-badge" aria-label="New game"><Sparkles size={15} fill="currentColor" /></span>}
-      <span className="game-card-title">{game.title}</span>
+    <Link href={`/games/${game.slug}`} className="game-card" aria-label={`Chơi ${game.title}`}>
+      <span className="game-card-art">
+        <Image src={game.image} alt="" fill sizes="(max-width: 640px) 50vw, 300px" priority={priority} unoptimized />
+        {game.badge && <span className={`badge ${game.badge === 'HOT' ? 'badge-hot' : ''}`}>{game.badge}</span>}
+        <span className="game-card-play" aria-hidden="true"><span><Play size={28} fill="currentColor" /></span></span>
+      </span>
+      <span className="game-card-name">{game.title}</span>
+      <span className="game-card-tag">{game.tagline}</span>
     </Link>
   );
 }

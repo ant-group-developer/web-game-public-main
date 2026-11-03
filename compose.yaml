@@ -9,6 +9,9 @@ services:
       args:
         SITE_URL: ${SITE_URL:-http://localhost:3100}
         NEXT_PUBLIC_APPLE_WORM_EMBED_URL: ${NEXT_PUBLIC_APPLE_WORM_EMBED_URL:-https://apple-worm.antfootage.net/embed/apple-worm}
+        NEXT_PUBLIC_CITY_BLOXX_EMBED_URL: ${NEXT_PUBLIC_CITY_BLOXX_EMBED_URL:-https://citybloxx.antfootage.net/embed?lang=vi&screen=quick}
+        NEXT_PUBLIC_LUDO_EMBED_URL: ${NEXT_PUBLIC_LUDO_EMBED_URL:-https://ludo.antfootage.net/}
+        NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL: ${NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL:-https://block-puzzle.antfootage.net/play}
     init: true
     restart: unless-stopped
     ports:

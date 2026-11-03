@@ -1,6 +1,6 @@
 # Apple Worm + SEO
 
-Trang chơi: /games/apple-worm. Game mặc định nhúng từ https://apple-worm.antfootage.net/embed/apple-worm.
+Trang chơi: /games/apple-worm (iframe tự tải). Game mặc định nhúng từ https://apple-worm.antfootage.net/embed/apple-worm; trang gốc https://apple-worm.antfootage.net/ giờ mở thẳng game toàn màn hình.
 Route khung chơi độc lập cùng domain: /embed/apple-worm (không có navigation/footer), noindex và CSP frame-ancestors *.
 
 Build production:
