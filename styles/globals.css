@@ -47,7 +47,7 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
 .section-title { margin: 0 0 18px; font-family: var(--font-title); font-size: 30px; font-weight: 800; line-height: 1.1; }
 .section-title-sm { font-size: 24px; margin-bottom: 14px; }
 .play-button {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px; align-self: flex-start;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   padding: 16px 34px; border-radius: 999px; background: var(--play); color: var(--play-ink); box-shadow: 0 5px 0 var(--play-shadow);
   font-family: var(--font-title); font-size: 22px; font-weight: 800; line-height: 1; white-space: nowrap; transition: transform .15s, box-shadow .15s;
 }
@@ -69,7 +69,7 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
 .hero-tag { padding: 5px 12px; border-radius: 8px; background: var(--bg); color: #45526b; font-size: 13px; font-weight: 800; }
 .hero h2 { margin: 0; font-family: var(--font-title); font-size: 68px; font-weight: 800; line-height: 1; }
 .hero p { margin: 0; font-size: 20px; font-weight: 700; color: #45526b; }
-.hero .play-button { margin-top: 8px; }
+.hero .play-button { margin-top: 8px; align-self: flex-start; }
 .hero-thumbs { margin-top: auto; display: flex; gap: 12px; }
 .hero-thumb { width: 60px; height: 60px; padding: 3px; border-radius: 16px; background: var(--surface); border: 3px solid var(--line); opacity: .7; transition: opacity .15s, border-color .15s, transform .15s; }
 .hero-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block; }
@@ -107,6 +107,10 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
 .player { position: relative; height: calc(100dvh - var(--header-h) - 24px - 78px - 32px); min-height: 420px; border-radius: 24px 24px 0 0; overflow: hidden; background: #0e1626; }
 .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 .player:fullscreen { height: 100%; min-height: 0; border-radius: 0; }
+/* Game cần đúng một tỉ lệ (Apple Worm 16:9): khung theo tỉ lệ đó; màn thấp thì game thu nhỏ vừa khung, căn giữa. */
+.player.has-ratio { container-type: size; height: auto; min-height: 0; aspect-ratio: var(--ratio); max-height: calc(100dvh - var(--header-h) - 24px - 78px - 32px); }
+.player.has-ratio iframe { inset: 0; margin: auto; width: min(100cqw, 100cqh * var(--ratio)); height: min(100cqh, 100cqw / var(--ratio)); }
+.player.has-ratio:fullscreen { aspect-ratio: auto; max-height: none; height: 100%; }
 .player-loading { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 22px; }
 .player-loading img { border-radius: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, .4); animation: pulse 1.4s ease-in-out infinite; }
 .spinner { width: 34px; height: 34px; border-radius: 50%; border: 4px solid #ffffff33; border-top-color: var(--play); animation: spin .8s linear infinite; }
@@ -193,6 +197,7 @@ body:has(.page-game) .site-header-inner { width: min(1320px, calc(100% - 32px));
   .player-bar-mobile > img { border-radius: 10px; }
   .player-bar-mobile-title { margin-right: auto; font-family: var(--font-title); font-size: 20px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .player { height: calc(100dvh - 56px); min-height: 380px; border-radius: 0; }
+  .player.has-ratio { height: auto; min-height: 0; max-height: calc(100dvh - 56px); }
   .player-bar { display: none; }
   .game-info, .more-games { margin-inline: 16px; }
   .more-games { margin-top: 18px; }

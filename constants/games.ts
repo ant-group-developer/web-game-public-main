@@ -33,6 +33,8 @@ export const games: Game[] = [
     tags: ['Giải đố', '30 màn'],
     badge: 'HOT',
     embedUrl: process.env.NEXT_PUBLIC_APPLE_WORM_EMBED_URL || 'https://apple-worm.antfootage.net/embed/apple-worm',
+    // Khung hẹp hơn 16:9 thì game cắt mất nút chơi lại, menu và số màn ở 2 bên.
+    aspectRatio: 16 / 9,
     author: 'Gibton',
     description: 'Chơi Apple Worm online miễn phí. Điều khiển sâu ăn táo, tăng chiều dài và tìm đường đến cổng thoát qua 30 màn giải đố ngay trên trình duyệt.',
     about: [

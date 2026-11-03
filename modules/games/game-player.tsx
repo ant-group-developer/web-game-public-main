@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react';
 import type { Game } from '@/types/game';
 import { addRecentGame } from '@/hooks/use-recent';
@@ -47,7 +47,7 @@ export function GamePlayer({ game }: { game: Game }) {
         <button type="button" className="icon-btn icon-btn-play" onClick={toggleFullscreen} aria-label={fullscreenLabel}><FullscreenIcon size={20} /></button>
       </div>
 
-      <div className="player" ref={frame}>
+      <div className={game.aspectRatio ? 'player has-ratio' : 'player'} ref={frame} style={game.aspectRatio ? ({ '--ratio': game.aspectRatio } as CSSProperties) : undefined}>
         {src && (
           <iframe
             key={reloadKey}
