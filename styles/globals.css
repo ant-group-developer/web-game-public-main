@@ -19,7 +19,7 @@
   --new: #e11d48;
   --hot: #c2410c;
   --font-body: 'Nunito', 'Segoe UI', system-ui, sans-serif;
-  --font-title: var(--font-display, 'Nunito'), 'Nunito', sans-serif;
+  --font-title: 'Baloo 2 Variable', 'Nunito', sans-serif;
   --header-h: 68px;
   --page: min(1200px, calc(100% - 32px));
 }

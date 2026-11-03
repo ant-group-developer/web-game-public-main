@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Baloo_2 } from 'next/font/google';
+// Baloo 2 tự host qua npm (Fontsource): build không cần gọi Google Fonts.
+import '@fontsource-variable/baloo-2';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import '@/styles/globals.css';
@@ -18,11 +19,9 @@ export const metadata: Metadata = {
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff', viewportFit: 'cover' };
 
-const display = Baloo_2({ subsets: ['latin', 'vietnamese'], weight: ['700', '800'], variable: '--font-display', display: 'swap' });
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="vi" className={display.variable}>
+    <html lang="vi">
       <body>
         <a href="#main" className="skip-link">Vào nội dung</a>
         <SiteHeader />
