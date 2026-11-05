@@ -166,6 +166,45 @@ export const games: Game[] = [
     },
   },
   {
+    slug: 'co-tuong',
+    image: '/games/co-tuong.svg',
+    tint: '#FBE3C4',
+    badge: 'new',
+    embedUrl: process.env.NEXT_PUBLIC_XIANGQI_EMBED_URL || 'https://co-tuong.antfootage.net/',
+    text: {
+      vi: {
+        title: 'Cờ Tướng',
+        tagline: 'Đấu máy, đấu xếp hạng',
+        tags: ['Cờ trí tuệ', 'Online'],
+        description: 'Chơi cờ tướng online miễn phí: đấu máy 6 mức độ từ Siêu dễ tới Bậc thầy, đấu xếp hạng Elo, tạo phòng chơi với bạn bè và xem trận trực tiếp.',
+        about: [
+          'Cờ tướng cho người Việt ngay trên trình duyệt. Máy có 6 mức độ từ Siêu dễ tới Bậc thầy, chạy ngay trên máy bạn, không cần mạng.',
+          'Đấu xếp hạng với người chơi khác theo Elo, tạo phòng công khai hoặc riêng tư để chơi với bạn bè, hoặc vào xem các trận đang diễn ra.',
+        ],
+        instructions: [
+          'Chọn “Chơi với máy”, “Đấu xếp hạng” hoặc “Chơi với bạn”.',
+          'Bấm vào quân để xem nước đi hợp lệ, bấm vào ô đích để đi. Đỏ đi trước.',
+          'Chiếu hết tướng đối phương hoặc khiến đối phương hết nước đi để thắng.',
+        ],
+      },
+      en: {
+        title: 'Xiangqi',
+        tagline: 'Play the AI or go ranked',
+        tags: ['Strategy', 'Online'],
+        description: 'Play Xiangqi (Chinese chess) online for free: 6 AI levels from Very easy to Master, Elo ranked matches, private rooms with friends and live spectating.',
+        about: [
+          'Xiangqi in your browser. The AI has 6 levels from Very easy to Master and runs on your device, no connection needed.',
+          'Climb the Elo ladder in ranked matches, open a public or private room to play friends, or watch games that are live right now.',
+        ],
+        instructions: [
+          'Choose “Play computer”, “Ranked game” or “Play a friend”.',
+          'Tap a piece to see its legal moves, then tap a target point to move. Red moves first.',
+          'Checkmate the enemy general or leave your opponent without a legal move to win.',
+        ],
+      },
+    },
+  },
+  {
     slug: 'block-puzzle',
     image: '/games/block-puzzle.svg',
     tint: '#FFE9C2',

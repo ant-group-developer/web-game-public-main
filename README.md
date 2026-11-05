@@ -85,6 +85,7 @@ public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 | Cờ Cá Ngựa | /games/co-ca-ngua | https://ludo.antfootage.net/ | NEXT_PUBLIC_LUDO_EMBED_URL |
 | Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
 | Cờ Caro (Infinite XO) | /games/co-caro | https://xo.antfootage.net/ | NEXT_PUBLIC_XO_EMBED_URL |
+| Cờ Tướng (Xiangqi) | /games/co-tuong | https://co-tuong.antfootage.net/ | NEXT_PUBLIC_XIANGQI_EMBED_URL |
 
 Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
 
@@ -95,7 +96,7 @@ Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nh�
 - Đồng bộ với game:
   - Khi mở game, portal thêm `?lang=vi|en` vào URL iframe. Không cần ghi `lang` trong env.
   - Đổi ngôn ngữ khi game đang mở thì portal gửi `postMessage({ type: 'ant-play:locale', locale })` xuống iframe, game đổi ngay mà không tải lại.
-  - City Bloxx, Cờ Cá Ngựa, Block Puzzle và Cờ Caro hỗ trợ cả hai cách trên. Apple Worm là bản Flash đóng gói sẵn, chữ nằm trong file game nên không đổi được.
+  - City Bloxx, Cờ Cá Ngựa, Block Puzzle, Cờ Caro và Cờ Tướng hỗ trợ cả hai cách trên. Apple Worm là bản Flash đóng gói sẵn, chữ nằm trong file game nên không đổi được.
 
 Thêm game mới: thêm một mục vào `constants/games.ts` (kèm `text.vi` và `text.en`) + ảnh vuông vào `public/games/`. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
 

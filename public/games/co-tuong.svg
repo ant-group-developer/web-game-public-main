@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f3d39b"/><stop offset="1" stop-color="#d9a35c"/></linearGradient>
+    <radialGradient id="redFace" cx=".4" cy=".35" r=".7"><stop stop-color="#fff8ea"/><stop offset="1" stop-color="#f1dcb4"/></radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e7c48a"/><stop offset="1" stop-color="#a86d2f"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#5a3510" flood-opacity=".45"/></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#wood)"/>
+
+  <!-- lưới bàn cờ + sông -->
+  <g stroke="#7a4a1c" stroke-width="4" stroke-opacity=".55" fill="none">
+    <path d="M32 40H480M32 104H480M32 168H480M32 232H480M32 296H480M32 360H480M32 424H480M32 488H480"/>
+    <path d="M32 40V488M480 40V488M96 40V232M160 40V232M224 40V232M288 40V232M352 40V232M416 40V232M96 296V488M160 296V488M224 296V488M288 296V488M352 296V488M416 296V488"/>
+    <path d="M224 40L352 168M352 40L224 168M224 360L352 488M352 360L224 488"/>
+  </g>
+  <rect x="34" y="236" width="444" height="56" fill="#cfe7f2" fill-opacity=".55"/>
+  <path d="M40 264c30-12 50 12 80 0s50-12 80 0 50 12 80 0 50-12 80 0 50 12 80 0 34-10 34-10" stroke="#5aa7c8" stroke-width="4" fill="none" stroke-opacity=".7" stroke-linecap="round"/>
+
+  <!-- quân đen phía sau -->
+  <g filter="url(#shadow)">
+    <circle cx="372" cy="150" r="78" fill="url(#rim)"/>
+    <circle cx="372" cy="144" r="70" fill="url(#redFace)"/>
+    <circle cx="372" cy="144" r="56" fill="none" stroke="#2b2b2b" stroke-width="5"/>
+    <text x="372" y="168" text-anchor="middle" font-size="70" font-weight="700" fill="#2b2b2b" font-family="KaiTi, STKaiti, 'Kaiti SC', 'Noto Serif SC', 'Noto Serif CJK SC', 'Songti SC', SimSun, serif">將</text>
+  </g>
+
+  <!-- quân đỏ phía trước -->
+  <g filter="url(#shadow)">
+    <circle cx="214" cy="330" r="128" fill="url(#rim)"/>
+    <circle cx="214" cy="320" r="116" fill="url(#redFace)"/>
+    <circle cx="214" cy="320" r="94" fill="none" stroke="#c62828" stroke-width="8"/>
+    <text x="214" y="360" text-anchor="middle" font-size="118" font-weight="700" fill="#c62828" font-family="KaiTi, STKaiti, 'Kaiti SC', 'Noto Serif SC', 'Noto Serif CJK SC', 'Songti SC', SimSun, serif">帥</text>
+  </g>
+</svg>

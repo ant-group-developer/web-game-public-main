@@ -13,6 +13,7 @@ services:
         NEXT_PUBLIC_LUDO_EMBED_URL: ${NEXT_PUBLIC_LUDO_EMBED_URL:-https://ludo.antfootage.net/}
         NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL: ${NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL:-https://block-puzzle.antfootage.net/play}
         NEXT_PUBLIC_XO_EMBED_URL: ${NEXT_PUBLIC_XO_EMBED_URL:-https://xo.antfootage.net/}
+        NEXT_PUBLIC_XIANGQI_EMBED_URL: ${NEXT_PUBLIC_XIANGQI_EMBED_URL:-https://co-tuong.antfootage.net/}
     init: true
     restart: unless-stopped
     ports:
