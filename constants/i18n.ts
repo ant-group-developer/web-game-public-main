@@ -2,6 +2,8 @@ export const locales = ['vi', 'en'] as const;
 export type Locale = (typeof locales)[number];
 export const DEFAULT_LOCALE: Locale = 'vi';
 
+export const localeNames: Record<Locale, string> = { vi: 'Tiếng Việt', en: 'English' };
+
 export const isLocale = (value: unknown): value is Locale => locales.includes(value as Locale);
 
 const vi = {
@@ -11,6 +13,12 @@ const vi = {
   'lang.label': 'Ngôn ngữ',
   'home.allGames': 'Tất cả game',
   'home.recent': 'Chơi gần đây',
+  'home.count': '{count} game',
+  'home.countOne': '{count} game',
+  'home.empty': 'Không có game nào khớp “{query}”.',
+  'search.label': 'Tìm game',
+  'search.placeholder': 'Tìm game…',
+  'search.clear': 'Xoá tìm kiếm',
   'hero.label': 'Game nổi bật',
   'hero.pick': 'Chọn game nổi bật',
   'play.cta': 'CHƠI',
@@ -24,6 +32,7 @@ const vi = {
   'detail.info': 'Giới thiệu & cách chơi',
   'detail.author': 'Tác giả: {name}',
   'detail.more': 'Chơi thêm',
+  'detail.back': 'Tất cả game',
   'badge.new': 'MỚI',
   'badge.hot': 'HOT',
   'notFound.title': 'Không tìm thấy game',
@@ -38,6 +47,12 @@ const en: Record<MessageKey, string> = {
   'lang.label': 'Language',
   'home.allGames': 'All games',
   'home.recent': 'Recently played',
+  'home.count': '{count} games',
+  'home.countOne': '{count} game',
+  'home.empty': 'No games match “{query}”.',
+  'search.label': 'Search games',
+  'search.placeholder': 'Search games…',
+  'search.clear': 'Clear search',
   'hero.label': 'Featured games',
   'hero.pick': 'Choose a featured game',
   'play.cta': 'PLAY',
@@ -51,6 +66,7 @@ const en: Record<MessageKey, string> = {
   'detail.info': 'About & how to play',
   'detail.author': 'Author: {name}',
   'detail.more': 'More games',
+  'detail.back': 'All games',
   'badge.new': 'NEW',
   'badge.hot': 'HOT',
   'notFound.title': 'Game not found',

@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { Play } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { games } from '@/constants/games';
 import type { Game } from '@/types/game';
 import { useT } from '@/hooks/use-locale';
+import { GameCard } from '@/components/game-card';
 import { GamePlayer } from './game-player';
 
 export function GameDetail({ game }: { game: Game }) {
@@ -15,31 +15,22 @@ export function GameDetail({ game }: { game: Game }) {
   return (
     <div className="page page-game">
       <h1 className="sr-only">{text.title}</h1>
+      <Link href="/" className="back"><ArrowLeft size={16} strokeWidth={2.6} aria-hidden="true" /> {t('detail.back')}</Link>
       <div className="game-layout">
         <div className="game-main">
           <GamePlayer key={game.slug} game={game} />
-          <details className="game-info">
-            <summary>{t('detail.info')}</summary>
+          <section className="game-info" aria-labelledby="game-info-title">
+            <p className="eyebrow"><span className="eyebrow-dot" aria-hidden="true" />{text.tags.join(' · ')}</p>
+            <h2 id="game-info-title">{t('detail.info')}</h2>
             {text.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             <ol>{text.instructions.map((step) => <li key={step}>{step}</li>)}</ol>
             {game.author && <p className="game-info-credit">{t('detail.author', { name: game.author })}</p>}
-          </details>
+          </section>
         </div>
         <aside className="more-games" aria-labelledby="more-games">
           <h2 id="more-games" className="section-title section-title-sm">{t('detail.more')}</h2>
           <div className="more-list">
-            {others.map((item) => {
-              const itemText = item.text[locale];
-              return (
-                <Link key={item.slug} href={`/games/${item.slug}`} className="more-card" aria-label={t('play.game', { title: itemText.title })}>
-                  <span className="more-card-art"><Image src={item.image} alt="" fill sizes="(max-width: 640px) 33vw, 280px" unoptimized /></span>
-                  <span className="more-card-info">
-                    <span className="more-card-text"><strong>{itemText.title}</strong><span>{itemText.tagline}</span></span>
-                    <span className="play-dot" aria-hidden="true"><Play size={14} fill="currentColor" /></span>
-                  </span>
-                </Link>
-              );
-            })}
+            {others.map((item) => <GameCard key={item.slug} game={item} />)}
           </div>
         </aside>
       </div>
