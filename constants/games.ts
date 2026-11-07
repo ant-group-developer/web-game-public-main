@@ -243,6 +243,8 @@ export const games: Game[] = [
     tint: '#BFEBDD',
     badge: 'new',
     embedUrl: process.env.NEXT_PUBLIC_POOL_EMBED_URL || 'https://9ball.antfootage.net/embed',
+    // Keep the native 1920×1080 viewport so the table's corner pockets stay visible.
+    aspectRatio: 16 / 9,
     text: {
       vi: {
         title: 'Bi-a 9 Bi',
