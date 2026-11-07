@@ -73,7 +73,7 @@ export function GamePlayer({ game }: { game: Game }) {
         )}
         {!loaded && (
           <div className="player-loading" aria-live="polite">
-            <Image src={game.image} alt="" width={120} height={120} unoptimized priority />
+            <Image src={game.image} alt="" width={112} height={112} unoptimized priority />
             <span className="spinner" aria-hidden="true" />
             <span className="sr-only">{t('play.loading', { title: text.title })}</span>
           </div>
@@ -81,13 +81,13 @@ export function GamePlayer({ game }: { game: Game }) {
       </div>
 
       <div className="player-bar">
-        <Image src={game.image} alt="" width={48} height={48} unoptimized />
+        <Image src={game.image} alt="" width={42} height={42} unoptimized />
         <div className="player-bar-title">
           <strong>{text.title}</strong>
           <span>{text.tags.join(' · ')}</span>
         </div>
-        <button type="button" className="icon-btn" onClick={reload} aria-label={t('play.reload')} title={t('play.reload')}><RotateCcw size={21} /></button>
-        <button type="button" className="play-button play-button-sm" onClick={toggleFullscreen}><FullscreenIcon size={20} /> {fullscreenLabel}</button>
+        <button type="button" className="icon-btn" onClick={reload} aria-label={t('play.reload')} title={t('play.reload')}><RotateCcw size={18} strokeWidth={2.4} /></button>
+        <button type="button" className="play-button play-button-sm" onClick={toggleFullscreen}><FullscreenIcon size={18} strokeWidth={2.4} aria-hidden="true" /><span>{fullscreenLabel}</span></button>
       </div>
     </section>
   );

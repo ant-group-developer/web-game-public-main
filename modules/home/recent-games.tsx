@@ -17,7 +17,7 @@ export function RecentGames() {
       <div className="recent-list">
         {recent.map((game) => (
           <Link key={game.slug} href={`/games/${game.slug}`} className="recent-item">
-            <Image src={game.image} alt="" width={64} height={64} unoptimized />
+            <Image src={game.image} alt="" width={40} height={40} unoptimized />
             <span>{game.text[locale].title}</span>
           </Link>
         ))}

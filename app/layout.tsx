@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   applicationName: 'ANT Play',
   icons: { icon: [{ url: '/brand/logo16.png', sizes: '16x16', type: 'image/png' }, { url: '/brand/logo32.png', sizes: '32x32', type: 'image/png' }, { url: '/brand/logo128.png', sizes: '128x128', type: 'image/png' }], apple: '/brand/logo128.png' },
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff', viewportFit: 'cover' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#111219', viewportFit: 'cover' };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

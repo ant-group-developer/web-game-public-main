@@ -3,8 +3,6 @@ import type { Locale } from '@/constants/i18n';
 /** Phần chữ của game, có một bản cho mỗi ngôn ngữ. */
 export interface GameText {
   title: string;
-  /** Câu ngắn (≤ 6 chữ) hiển thị trên thẻ game. */
-  tagline: string;
   /** Nhãn ngắn hiển thị trên banner. */
   tags: string[];
   description: string;
@@ -14,8 +12,10 @@ export interface GameText {
 
 export interface Game {
   slug: string;
-  /** Ảnh vuông dùng cho thẻ game. */
+  /** Ảnh vuông (ảnh nhỏ trên banner, thanh game, màn tải). */
   image: string;
+  /** Ảnh bìa 16:9 cho thẻ game và banner trang chủ. */
+  cover: string;
   /** Ảnh chia sẻ 1200×630 (Open Graph). */
   ogImage?: string;
   /** Màu nền nhạt phía sau ảnh game trên banner trang chủ. */

@@ -3,8 +3,11 @@ import Image from 'next/image';
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <Image src="/brand/logo32.png" width={20} height={20} alt="" />
-      <span>© {new Date().getFullYear()} ANT Play</span>
+      <span className="site-footer-brand">
+        <Image src="/brand/logo32.png" width={18} height={18} alt="" />
+        ANT Play
+      </span>
+      <span>© {new Date().getFullYear()}</span>
     </footer>
   );
 }

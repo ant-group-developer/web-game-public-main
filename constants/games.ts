@@ -5,7 +5,8 @@ import type { Game } from '@/types/game';
 export const games: Game[] = [
   {
     slug: 'city-bloxx',
-    image: '/games/city-bloxx.svg',
+    image: '/games/wide/city-bloxx-thumbnail.webp',
+    cover: '/games/wide/city-bloxx-thumbnail.webp',
     tint: '#CDEBFF',
     badge: 'new',
     embedUrl: process.env.NEXT_PUBLIC_CITY_BLOXX_EMBED_URL || 'https://citybloxx.antfootage.net/embed?screen=quick',
@@ -13,7 +14,6 @@ export const games: Game[] = [
     text: {
       vi: {
         title: 'City Bloxx',
-        tagline: 'Thả chuẩn, xây cao',
         tags: ['Xây tháp', 'PvP 1v1'],
         description: 'Chơi City Bloxx online miễn phí: canh thời điểm thả từng tầng nhà, xếp tháp thật chính xác và xây cả thành phố. Có thử thách hằng ngày và Solo PvP 1v1.',
         about: [
@@ -28,7 +28,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'City Bloxx',
-        tagline: 'Drop it right, build it high',
         tags: ['Tower building', '1v1 PvP'],
         description: 'Play City Bloxx online for free: time every floor drop, stack a perfect tower and build a whole city. Includes a daily challenge and 1v1 Solo PvP.',
         about: [
@@ -45,7 +44,8 @@ export const games: Game[] = [
   },
   {
     slug: 'apple-worm',
-    image: '/games/apple-worm.jpg',
+    image: '/games/wide/apple-worm-thumbnail.webp',
+    cover: '/games/wide/apple-worm-thumbnail.webp',
     ogImage: '/seo/apple-worm-og.jpg',
     tint: '#D6F2C8',
     badge: 'hot',
@@ -56,7 +56,6 @@ export const games: Game[] = [
     text: {
       vi: {
         title: 'Apple Worm',
-        tagline: 'Ăn táo, tìm lối thoát',
         tags: ['Giải đố', '30 màn'],
         description: 'Chơi Apple Worm online miễn phí. Điều khiển sâu ăn táo, tăng chiều dài và tìm đường đến cổng thoát qua 30 màn giải đố ngay trên trình duyệt.',
         about: [
@@ -71,7 +70,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'Apple Worm',
-        tagline: 'Eat apples, find the exit',
         tags: ['Puzzle', '30 levels'],
         description: 'Play Apple Worm online for free. Guide the worm to eat apples, grow longer and reach the exit portal across 30 puzzle levels, right in your browser.',
         about: [
@@ -88,7 +86,8 @@ export const games: Game[] = [
   },
   {
     slug: 'co-ca-ngua',
-    image: '/games/ludo.svg',
+    image: '/games/wide/co-ca-ngua-thumbnail.webp',
+    cover: '/games/wide/co-ca-ngua-thumbnail.webp',
     ogImage: '/seo/ludo-og.png',
     tint: '#E6DEFC',
     badge: 'new',
@@ -96,7 +95,6 @@ export const games: Game[] = [
     text: {
       vi: {
         title: 'Cờ Cá Ngựa',
-        tagline: '2–4 người, chơi online',
         tags: ['2–4 người', 'Online'],
         description: 'Chơi cờ cá ngựa (Ludo) online miễn phí, 2–4 người. Đấu với máy, chuyền máy cho bạn bè hoặc tạo phòng online và gửi link mời. Không cần tải, không cần đăng ký.',
         about: [
@@ -111,7 +109,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'Ludo',
-        tagline: '2–4 players, play online',
         tags: ['2–4 players', 'Online'],
         description: 'Play Ludo online for free with 2–4 players. Battle bots, pass the device to friends or create an online room and share the invite link. No download, no sign-up.',
         about: [
@@ -128,14 +125,14 @@ export const games: Game[] = [
   },
   {
     slug: 'co-caro',
-    image: '/games/xo.svg',
+    image: '/games/wide/co-caro-thumbnail-5-in-row.webp',
+    cover: '/games/wide/co-caro-thumbnail-5-in-row.webp',
     tint: '#F3DBFF',
     badge: 'new',
     embedUrl: process.env.NEXT_PUBLIC_XO_EMBED_URL || 'https://xo.antfootage.net/',
     text: {
       vi: {
         title: 'Cờ Caro',
-        tagline: '5 quân là thắng',
         tags: ['Bàn cờ vô hạn', 'Online'],
         description: 'Chơi cờ caro (XO) online miễn phí trên bàn cờ không giới hạn. Xếp 5 quân liên tiếp để thắng, đấu với máy 3 mức độ, chơi 2 người trên một máy hoặc tạo phòng online.',
         about: [
@@ -150,7 +147,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'Infinite XO',
-        tagline: 'Five in a row wins',
         tags: ['Endless board', 'Online'],
         description: 'Play Gomoku-style XO online for free on an endless board. Get 5 in a row to win, battle a bot on 3 levels, play 2 players on one device or create an online room.',
         about: [
@@ -167,14 +163,14 @@ export const games: Game[] = [
   },
   {
     slug: 'co-tuong',
-    image: '/games/co-tuong.svg',
+    image: '/games/wide/co-tuong-thumbnail.webp',
+    cover: '/games/wide/co-tuong-thumbnail.webp',
     tint: '#FBE3C4',
     badge: 'new',
     embedUrl: process.env.NEXT_PUBLIC_XIANGQI_EMBED_URL || 'https://co-tuong.antfootage.net/',
     text: {
       vi: {
         title: 'Cờ Tướng',
-        tagline: 'Đấu máy, đấu xếp hạng',
         tags: ['Cờ trí tuệ', 'Online'],
         description: 'Chơi cờ tướng online miễn phí: đấu máy 6 mức độ từ Siêu dễ tới Bậc thầy, đấu xếp hạng Elo, tạo phòng chơi với bạn bè và xem trận trực tiếp.',
         about: [
@@ -189,7 +185,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'Xiangqi',
-        tagline: 'Play the AI or go ranked',
         tags: ['Strategy', 'Online'],
         description: 'Play Xiangqi (Chinese chess) online for free: 6 AI levels from Very easy to Master, Elo ranked matches, private rooms with friends and live spectating.',
         about: [
@@ -206,13 +201,13 @@ export const games: Game[] = [
   },
   {
     slug: 'block-puzzle',
-    image: '/games/block-puzzle.svg',
+    image: '/games/wide/block-puzzle-thumbnail.webp',
+    cover: '/games/wide/block-puzzle-thumbnail.webp',
     tint: '#FFE9C2',
     embedUrl: process.env.NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL || 'https://block-puzzle.antfootage.net/play',
     text: {
       vi: {
         title: 'Block Puzzle',
-        tagline: 'Xếp khối, phá hàng',
         tags: ['Xếp khối', 'Thử thách ngày'],
         description: 'Chơi Block Puzzle 8×8 online miễn phí: kéo khối vào bàn, lấp đầy hàng hoặc cột để phá, nối combo để lấy điểm cao. Có thử thách hằng ngày, màn chơi và đấu 1v1.',
         about: [
@@ -227,7 +222,6 @@ export const games: Game[] = [
       },
       en: {
         title: 'Block Puzzle',
-        tagline: 'Place blocks, clear lines',
         tags: ['Block puzzle', 'Daily challenge'],
         description: 'Play 8×8 Block Puzzle online for free: drag blocks onto the board, fill rows or columns to clear them and chain combos for a high score. Includes a daily challenge, levels and 1v1 matches.',
         about: [
@@ -239,6 +233,54 @@ export const games: Game[] = [
           'Fill a full row or column to clear it.',
           'Leave room for big blocks and keep your combo going to multiply points.',
         ],
+      },
+    },
+  },
+  {
+    slug: 'pool-9-ball',
+    image: '/games/wide/pool-9-ball-thumbnail.webp',
+    cover: '/games/wide/pool-9-ball-thumbnail.webp',
+    tint: '#BFEBDD',
+    badge: 'new',
+    embedUrl: process.env.NEXT_PUBLIC_POOL_EMBED_URL || 'https://9ball.antfootage.net/embed',
+    text: {
+      vi: {
+        title: 'Bi-a 9 Bi',
+        tags: ['Bi-a', 'Thể thao'],
+        description: 'Chơi bi-a 9 bi online miễn phí ngay trên trình duyệt: ngắm, căn lực và đưa bi số 9 vào lỗ để thắng.',
+        about: ['Đánh bi theo thứ tự số từ nhỏ đến lớn. Đưa bi số 9 vào lỗ hợp lệ là thắng ván.'],
+        instructions: ['Kéo chuột hoặc ngón tay để ngắm.', 'Kéo thanh lực rồi thả để đánh bi.'],
+      },
+      en: {
+        title: '9 Ball Pool',
+        tags: ['Pool', 'Sports'],
+        description: 'Play 9-ball pool online for free in your browser: aim, set the power and sink the 9 ball to win.',
+        about: ['Hit the balls in numerical order. Legally pocket the 9 ball to win the rack.'],
+        instructions: ['Drag with the mouse or your finger to aim.', 'Pull the power bar and release to shoot.'],
+      },
+    },
+  },
+  {
+    slug: 'dinosaur-game',
+    image: '/games/wide/dinosaur-game-thumbnail.webp',
+    cover: '/games/wide/dinosaur-game-thumbnail.webp',
+    tint: '#FFDDB8',
+    badge: 'new',
+    embedUrl: process.env.NEXT_PUBLIC_DINO_EMBED_URL || 'https://dino.antfootage.net/embed',
+    text: {
+      vi: {
+        title: 'Khủng Long Chạy',
+        tags: ['Chạy vô tận', 'Phản xạ'],
+        description: 'Chơi game khủng long chạy online miễn phí: nhảy qua xương rồng, cúi né chim và chạy xa nhất có thể.',
+        about: ['Khủng long chạy càng lúc càng nhanh. Nhảy qua xương rồng, né chim bay để giữ kỷ lục.'],
+        instructions: ['Nhấn Space, mũi tên lên hoặc chạm màn hình để nhảy.', 'Nhấn mũi tên xuống để cúi người.'],
+      },
+      en: {
+        title: 'Dinosaur Game',
+        tags: ['Endless runner', 'Reflex'],
+        description: 'Play the dinosaur runner online for free: jump over cacti, duck under birds and run as far as you can.',
+        about: ['The dinosaur keeps getting faster. Jump over cacti and dodge birds to set a new record.'],
+        instructions: ['Press Space, the up arrow or tap the screen to jump.', 'Press the down arrow to duck.'],
       },
     },
   },
