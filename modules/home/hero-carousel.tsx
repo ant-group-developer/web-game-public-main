@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 import { games } from '@/constants/games';
 import { GameBadge } from '@/components/game-badge';
@@ -11,7 +11,7 @@ import { cn } from '@/helpers/tailwind';
 
 const INTERVAL = 6000;
 
-/** Banner game nổi bật: chữ lớn + nút CHƠI NGAY bên trái, ảnh game trên nền lưới tím bên phải, dãy ảnh nhỏ để chuyển game. */
+/** Banner game nổi bật: tên game + nút CHƠI NGAY bên trái, ảnh bìa 16:9 bên phải, dãy ảnh nhỏ để chuyển game. */
 export function HeroCarousel() {
   const { locale, t } = useT();
   const [index, setIndex] = useState(0);
@@ -30,11 +30,8 @@ export function HeroCarousel() {
 
   return (
     <section className="hero" aria-roledescription="carousel" aria-label={t('hero.label')} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
-      <Link href={`/games/${game.slug}`} className="hero-art" style={{ '--tint': game.tint } as CSSProperties} tabIndex={-1} aria-hidden="true">
-        <span className="hero-ring" />
-        <span className="hero-spark hero-spark-a" />
-        <span className="hero-spark hero-spark-b" />
-        <Image key={game.slug} src={game.image} alt="" width={280} height={280} priority unoptimized />
+      <Link href={`/games/${game.slug}`} className="hero-art" tabIndex={-1} aria-hidden="true">
+        <Image key={game.slug} src={game.cover} alt="" fill sizes="(max-width: 640px) 100vw, 780px" priority unoptimized />
       </Link>
       <div className="hero-copy" key={game.slug}>
         <p className="eyebrow">
@@ -43,7 +40,6 @@ export function HeroCarousel() {
           {game.badge && <GameBadge badge={game.badge} inline />}
         </p>
         <h2>{words.length > 0 && <>{words.join(' ')} </>}<em>{lastWord}</em></h2>
-        <p className="hero-tagline">{text.tagline}.</p>
         <Link href={`/games/${game.slug}`} className="play-button" aria-label={t('play.game', { title: text.title })}>
           <Play size={18} fill="currentColor" aria-hidden="true" />
           <span>{t('play.cta')}<span className="hide-sm">{t('play.ctaNow')}</span></span>

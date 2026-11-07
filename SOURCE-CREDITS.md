@@ -9,3 +9,6 @@
 - Logo / favicon: do người dùng cung cấp trong `assets/`.
 - Font Nunito: Google Fonts, SIL Open Font License (`public/fonts/OFL.txt`).
 - Icon UI: Lucide (ISC) qua `lucide-react`.
+- Ảnh bìa 16:9 `public/games/wide/*.svg`: vẽ riêng cho portal (dùng cho thẻ game và banner trang chủ).
+- Bi-a 9 Bi (9 Ball Pool): bản game tĩnh trong project `pool-9-ball-main`, chạy tại https://9ball.antfootage.net/embed.
+- Khủng Long Chạy (Dinosaur Game): bản game tĩnh trong project `dinosaur-game-main`, chạy tại https://dino.antfootage.net/embed.

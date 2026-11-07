@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { games } from '@/constants/games';
 import type { Game } from '@/types/game';
 import { useT } from '@/hooks/use-locale';
@@ -19,13 +19,13 @@ export function GameDetail({ game }: { game: Game }) {
       <div className="game-layout">
         <div className="game-main">
           <GamePlayer key={game.slug} game={game} />
-          <section className="game-info" aria-labelledby="game-info-title">
-            <p className="eyebrow"><span className="eyebrow-dot" aria-hidden="true" />{text.tags.join(' · ')}</p>
-            <h2 id="game-info-title">{t('detail.info')}</h2>
+          {/* Thu gọn mặc định: người chơi tập trung vào game, nội dung vẫn có trong HTML cho SEO. */}
+          <details className="game-info">
+            <summary><span>{t('detail.info')}</span><ChevronDown size={18} strokeWidth={2.6} aria-hidden="true" /></summary>
             {text.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             <ol>{text.instructions.map((step) => <li key={step}>{step}</li>)}</ol>
             {game.author && <p className="game-info-credit">{t('detail.author', { name: game.author })}</p>}
-          </section>
+          </details>
         </div>
         <aside className="more-games" aria-labelledby="more-games">
           <h2 id="more-games" className="section-title section-title-sm">{t('detail.more')}</h2>

@@ -86,6 +86,8 @@ public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 | Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
 | Cờ Caro (Infinite XO) | /games/co-caro | https://xo.antfootage.net/ | NEXT_PUBLIC_XO_EMBED_URL |
 | Cờ Tướng (Xiangqi) | /games/co-tuong | https://co-tuong.antfootage.net/ | NEXT_PUBLIC_XIANGQI_EMBED_URL |
+| Bi-a 9 Bi (9 Ball Pool) | /games/pool-9-ball | https://9ball.antfootage.net/embed | NEXT_PUBLIC_POOL_EMBED_URL |
+| Khủng Long Chạy (Dinosaur Game) | /games/dinosaur-game | https://dino.antfootage.net/embed | NEXT_PUBLIC_DINO_EMBED_URL |
 
 Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
 

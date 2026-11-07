@@ -27,5 +27,5 @@ const normalize = (value: string) => value.normalize('NFD').replace(/[̀-ͯ]/g, 
 export function matchGame(game: Game, value: string) {
   const needle = normalize(value);
   if (!needle) return true;
-  return Object.values(game.text).some(({ title, tagline, tags }) => normalize([title, tagline, ...tags].join(' ')).includes(needle));
+  return Object.values(game.text).some(({ title, tags }) => normalize([title, ...tags].join(' ')).includes(needle));
 }

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 900" width="1600" height="900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="pool-9-ball-felt" cx="55%" cy="50%" r="70%">
+      <stop offset="0" stop-color="#14a184"/>
+      <stop offset=".6" stop-color="#0c7a69"/>
+      <stop offset="1" stop-color="#084f4b"/>
+    </radialGradient>
+    <radialGradient id="pool-9-ball-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#9dffe0" stop-opacity=".45"/>
+      <stop offset=".6" stop-color="#4fe0b8" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#4fe0b8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pool-9-ball-vig" cx="50%" cy="50%" r="72%">
+      <stop offset=".55" stop-color="#06100f" stop-opacity="0"/>
+      <stop offset="1" stop-color="#06100f" stop-opacity=".6"/>
+    </radialGradient>
+    <radialGradient id="pool-9-ball-shade" cx="36%" cy="32%" r="72%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".8" stop-color="#000" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".35"/>
+    </radialGradient>
+    <linearGradient id="pool-9-ball-rail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a2a14"/>
+      <stop offset="1" stop-color="#8a4421"/>
+    </linearGradient>
+    <pattern id="pool-9-ball-dots" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="2" fill="#fff" fill-opacity=".06"/>
+    </pattern>
+    <clipPath id="pool-9-ball-ball-clip"><circle r="44"/></clipPath>
+    <path id="pool-9-ball-spark" d="M0-24C3-6 6-3 24 0C6 3 3 6 0 24C-3 6-6 3-24 0C-6-3-3-6 0-24Z"/>
+
+    <!-- solid ball, colour from <use fill> -->
+    <g id="pool-9-ball-solid">
+      <circle r="44" stroke="#171326" stroke-width="6"/>
+      <circle cx="-2" cy="-2" r="16" fill="#fff"/>
+      <circle r="44" fill="url(#pool-9-ball-shade)"/>
+      <ellipse cx="-17" cy="-20" rx="10" ry="6" fill="#fff" opacity=".75" transform="rotate(-35 -17 -20)"/>
+    </g>
+  </defs>
+
+  <!-- felt -->
+  <rect width="1600" height="900" fill="url(#pool-9-ball-felt)"/>
+  <rect width="1600" height="900" fill="url(#pool-9-ball-dots)"/>
+  <circle cx="900" cy="400" r="380" fill="url(#pool-9-ball-glow)"/>
+
+  <!-- table rails: top and right, with corner + side pocket -->
+  <g stroke="#171326" stroke-width="6" stroke-linejoin="round">
+    <path d="M-10-10H1610V900H1440V140H-10Z" fill="url(#pool-9-ball-rail)"/>
+    <path d="M-10 96H1384L1440 152V900H1404V164L1372 132H-10Z" fill="#0a5f52"/>
+  </g>
+  <!-- rail sights -->
+  <g fill="#f4ecd8" stroke="#171326" stroke-width="3">
+    <path d="M300 34l12 12l-12 12l-12-12z"/>
+    <path d="M550 34l12 12l-12 12l-12-12z"/>
+    <path d="M1050 34l12 12l-12 12l-12-12z"/>
+    <path d="M1300 34l12 12l-12 12l-12-12z"/>
+    <path d="M1520 360l12 12l-12 12l-12-12z"/>
+    <path d="M1520 620l12 12l-12 12l-12-12z"/>
+  </g>
+  <!-- pockets -->
+  <g fill="#0b0a12" stroke="#171326" stroke-width="6">
+    <circle cx="800" cy="104" r="50"/>
+    <circle cx="1424" cy="120" r="62"/>
+  </g>
+  <g fill="none" stroke="#e8c27a" stroke-width="6" opacity=".6">
+    <path d="M752 92a50 50 0 0 1 96 0"/>
+    <path d="M1374 98a62 62 0 0 1 98 6"/>
+  </g>
+
+  <g transform="translate(800 470) scale(1.12) translate(-800 -470)">
+  <!-- aim line -->
+  <path d="M604 580L742 494" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="4 16" opacity=".7"/>
+
+  <!-- rack shadow -->
+  <g fill="#03302c" opacity=".35">
+    <circle cx="788" cy="482" r="44"/><circle cx="830" cy="402" r="44"/><circle cx="878" cy="479" r="44"/>
+    <circle cx="873" cy="323" r="44"/><circle cx="920" cy="399" r="44"/><circle cx="968" cy="476" r="44"/>
+    <circle cx="963" cy="320" r="44"/><circle cx="1010" cy="396" r="44"/><circle cx="1053" cy="317" r="44"/>
+    <circle cx="570" cy="620" r="44"/>
+  </g>
+
+  <!-- the 9-ball diamond rack (back to front) -->
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="1045" y="305" fill="#26232e"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="955" y="308" fill="#1fae5b"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="865" y="311" fill="#7d4bd6"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="1002" y="384" fill="#8f1d2c"/>
+  <!-- 9: yellow stripe -->
+  <g transform="translate(912 387)">
+    <circle r="44" fill="#fbf7ea"/>
+    <rect x="-46" y="-24" width="92" height="48" fill="#ffcc1f" clip-path="url(#pool-9-ball-ball-clip)"/>
+    <circle cx="-2" cy="-2" r="16" fill="#fff"/>
+    <circle r="44" fill="url(#pool-9-ball-shade)" stroke="#171326" stroke-width="6"/>
+    <ellipse cx="-17" cy="-20" rx="10" ry="6" fill="#fff" opacity=".75" transform="rotate(-35 -17 -20)"/>
+  </g>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="822" y="390" fill="#2f6bff"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="960" y="464" fill="#ff8a1f"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="870" y="467" fill="#f23b3b"/>
+  <use xlink:href="#pool-9-ball-solid" href="#pool-9-ball-solid" x="780" y="470" fill="#ffcc1f"/>
+
+  <!-- cue ball -->
+  <g transform="translate(560 608)">
+    <circle r="44" fill="#fbf7ea" stroke="#171326" stroke-width="6"/>
+    <circle r="44" fill="url(#pool-9-ball-shade)"/>
+    <ellipse cx="-17" cy="-20" rx="10" ry="6" fill="#fff" transform="rotate(-35 -17 -20)"/>
+  </g>
+  <g stroke="#e8fc77" stroke-width="6" stroke-linecap="round" opacity=".7">
+    <path d="M486 578l-36 22"/><path d="M500 534l-30 18"/>
+  </g>
+
+  <!-- cue stick (points up-right at the cue ball) -->
+  <g transform="translate(506 642) rotate(148)" stroke-linejoin="round">
+    <path d="M0-9L900-22V22L0 9Z" fill="#171326" stroke="#171326" stroke-width="12"/>
+    <path d="M0-9H14V9H0Z" fill="#3fa3ff"/>
+    <path d="M14-9.2L40-9.6V9.6L14 9.2Z" fill="#f4f1e8"/>
+    <path d="M40-9.6L520-16.5V16.5L40 9.6Z" fill="#f2d19a"/>
+    <path d="M40-4L520-7" stroke="#fff" stroke-width="3" opacity=".5"/>
+    <path d="M520-16.5L548-16.9V16.9L520 16.5Z" fill="#26232e"/>
+    <path d="M548-16.9L900-22V22L548 16.9Z" fill="#7a3418"/>
+    <path d="M548-16.9L640 0L548 16.9ZM640-18.2L720 0L640 18.2Z" fill="#f981ad"/>
+    <path d="M760-20V20M780-20.3V20.3" stroke="#e8fc77" stroke-width="6"/>
+  </g>
+
+  </g>
+
+  <!-- sparkles -->
+  <g fill="#e8fc77">
+    <use xlink:href="#pool-9-ball-spark" href="#pool-9-ball-spark" transform="translate(720 360) scale(1)"/>
+    <use xlink:href="#pool-9-ball-spark" href="#pool-9-ball-spark" transform="translate(1130 440) scale(1.2)"/>
+    <use xlink:href="#pool-9-ball-spark" href="#pool-9-ball-spark" transform="translate(1190 270) scale(.6)"/>
+    <use xlink:href="#pool-9-ball-spark" href="#pool-9-ball-spark" transform="translate(420 380) scale(.7)"/>
+  </g>
+  <g stroke="#e8fc77" stroke-width="5" stroke-linecap="round" opacity=".8">
+    <path d="M1180 580h18M1189 571v18"/>
+    <path d="M650 230h16M658 222v16"/>
+    <path d="M760 700h16M768 692v16"/>
+  </g>
+
+  <rect width="1600" height="900" fill="url(#pool-9-ball-vig)"/>
+</svg>
