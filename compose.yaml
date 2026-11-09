@@ -8,24 +8,24 @@ services:
       dockerfile: Dockerfile
       args:
         SITE_URL: ${SITE_URL:-http://localhost:3100}
-        NEXT_PUBLIC_APPLE_WORM_EMBED_URL: ${NEXT_PUBLIC_APPLE_WORM_EMBED_URL:-https://apple-worm.antfootage.net/embed/apple-worm}
-        NEXT_PUBLIC_CITY_BLOXX_EMBED_URL: ${NEXT_PUBLIC_CITY_BLOXX_EMBED_URL:-https://citybloxx.antfootage.net/embed?screen=quick}
-        NEXT_PUBLIC_LUDO_EMBED_URL: ${NEXT_PUBLIC_LUDO_EMBED_URL:-https://ludo.antfootage.net/}
-        NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL: ${NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL:-https://block-puzzle.antfootage.net/play}
-        NEXT_PUBLIC_XO_EMBED_URL: ${NEXT_PUBLIC_XO_EMBED_URL:-https://xo.antfootage.net/}
-        NEXT_PUBLIC_XIANGQI_EMBED_URL: ${NEXT_PUBLIC_XIANGQI_EMBED_URL:-https://co-tuong.antfootage.net/}
-        NEXT_PUBLIC_CHESS_EMBED_URL: ${NEXT_PUBLIC_CHESS_EMBED_URL:-https://chess.antfootage.net/embed}
-        NEXT_PUBLIC_DINO_EMBED_URL: ${NEXT_PUBLIC_DINO_EMBED_URL:-https://dino.antfootage.net/embed}
     init: true
     restart: unless-stopped
     ports:
       - "${BIND_ADDRESS:-0.0.0.0}:${APP_PORT:-3100}:${PORT:-3000}"
+    # Cho phép dùng http://host.docker.internal:<port> khi API chạy trên máy host (Linux cần dòng này).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: "${PORT:-3000}"
       TZ: ${TZ:-Asia/Ho_Chi_Minh}
       NEXT_TELEMETRY_DISABLED: "1"
+      # API game (admin CMS). Phải truy cập được TỪ BÊN TRONG container: tên service cùng network
+      # (vd http://api:3000) hoặc http://host.docker.internal:3000 — localhost ở đây là chính container web.
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://host.docker.internal:3000}
+      # Trùng với REVALIDATE_SECRET của API để webhook /api/revalidate được chấp nhận.
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET:-}
     stop_grace_period: 20s
     logging:
       driver: json-file

@@ -10,15 +10,9 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 
 FROM base AS builder
 ARG SITE_URL=http://localhost:3100
-ARG NEXT_PUBLIC_APPLE_WORM_EMBED_URL=https://apple-worm.antfootage.net/embed/apple-worm
-ARG NEXT_PUBLIC_CITY_BLOXX_EMBED_URL=https://citybloxx.antfootage.net/embed?screen=quick
-ARG NEXT_PUBLIC_LUDO_EMBED_URL=https://ludo.antfootage.net/
-ARG NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL=https://block-puzzle.antfootage.net/play
-ARG NEXT_PUBLIC_XO_EMBED_URL=https://xo.antfootage.net/
-ARG NEXT_PUBLIC_XIANGQI_EMBED_URL=https://co-tuong.antfootage.net/
-ARG NEXT_PUBLIC_CHESS_EMBED_URL=https://chess.antfootage.net/embed
-ARG NEXT_PUBLIC_DINO_EMBED_URL=https://dino.antfootage.net/embed
-ENV SITE_URL=$SITE_URL NEXT_PUBLIC_APPLE_WORM_EMBED_URL=$NEXT_PUBLIC_APPLE_WORM_EMBED_URL NEXT_PUBLIC_CITY_BLOXX_EMBED_URL=$NEXT_PUBLIC_CITY_BLOXX_EMBED_URL NEXT_PUBLIC_LUDO_EMBED_URL=$NEXT_PUBLIC_LUDO_EMBED_URL NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL=$NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL NEXT_PUBLIC_XO_EMBED_URL=$NEXT_PUBLIC_XO_EMBED_URL NEXT_PUBLIC_XIANGQI_EMBED_URL=$NEXT_PUBLIC_XIANGQI_EMBED_URL NEXT_PUBLIC_CHESS_EMBED_URL=$NEXT_PUBLIC_CHESS_EMBED_URL NEXT_PUBLIC_DINO_EMBED_URL=$NEXT_PUBLIC_DINO_EMBED_URL
+ENV SITE_URL=$SITE_URL
+# Danh sách game lấy từ API lúc chạy (API_INTERNAL_URL là biến runtime, không cần lúc build).
+# Build không cần API: nếu không gọi được thì trang game được tạo khi có request đầu tiên.
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
