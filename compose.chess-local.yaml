@@ -1,0 +1,7 @@
+services:
+  web:
+    image: ant-play:chess-local
+    build:
+      args:
+        SITE_URL: http://localhost:11925
+        NEXT_PUBLIC_CHESS_EMBED_URL: http://localhost:11926/embed
