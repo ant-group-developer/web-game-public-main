@@ -3,17 +3,20 @@
 import type { Game } from '@/types/game';
 import { GameCard } from '@/components/game-card';
 import { useT } from '@/hooks/use-locale';
+import { useSite } from '@/components/site-provider';
+import { pickText } from '@/types/site';
 import { matchGame, useSearch } from '@/hooks/use-search';
 import { HeroCarousel } from './hero-carousel';
 import { RecentGames } from './recent-games';
 
 export function HomeContent({ games }: { games: Game[] }) {
-  const { t } = useT();
+  const { t, locale } = useT();
+  const { siteName, tagline } = useSite();
   const query = useSearch();
   const list = games.filter((game) => matchGame(game, query));
   return (
     <div className="page">
-      <h1 className="sr-only">{t('site.tagline')}</h1>
+      <h1 className="sr-only">{siteName} — {pickText(tagline, locale)}</h1>
       {games.length > 0 && <HeroCarousel games={games} />}
       <section id="catalog" aria-labelledby="all-games" className="section">
         <h2 id="all-games" className="section-title">{t('home.allGames')}</h2>

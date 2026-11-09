@@ -4,12 +4,13 @@ import { revalidateTag } from 'next/cache';
 /**
  * Webhook từ API (admin CMS) sau khi game thay đổi:
  *   POST /api/revalidate  · header x-revalidate-secret: <REVALIDATE_SECRET>  · body { "tags": ["games", "game:<slug>"] }
+ *   Cấu hình web (tên, logo, favicon, SEO trang chủ) đổi → tag "site-config" (layout của mọi trang).
  * Đánh dấu cache cũ (stale-while-revalidate, profile "max"): request kế tiếp nhận bản cũ và kích hoạt tạo lại,
  * các request sau đó nhận bản mới. Nếu API lỗi lúc tạo lại thì Next tiếp tục phục vụ bản cũ.
  */
 export const dynamic = 'force-dynamic';
 
-const TAG_PATTERN = /^(games|game:[a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const TAG_PATTERN = /^(games|site-config|game:[a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const MAX_TAGS = 50;
 
 function isAuthorized(header: string | null) {

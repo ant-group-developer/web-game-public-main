@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getGameBySlug, getGames } from '@/lib/api/games';
+import { getSiteConfig } from '@/lib/api/site';
+import type { SiteConfig } from '@/types/site';
 import { GameDetail } from '@/modules/games/game-detail';
 import { absoluteUrl } from '@/helpers/seo';
 import type { Game } from '@/types/game';
@@ -17,10 +19,10 @@ export async function generateStaticParams() {
 }
 
 /** SEO của game theo tiếng Việt (ngôn ngữ server render). Trường để trống trong CMS thì suy ra từ nội dung game. */
-function resolveSeo(game: Game) {
+function resolveSeo(game: Game, site: SiteConfig) {
   const text = game.text.vi;
   const seo = game.seo.vi;
-  const title = seo.title?.trim() || `${text.title} — Chơi online miễn phí`;
+  const title = seo.title?.trim() || `${text.title}${site.seo.gameTitleSuffix.vi}`;
   const description = seo.description?.trim() || text.description;
   return {
     name: text.title,
@@ -36,25 +38,25 @@ function resolveSeo(game: Game) {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const game = await getGameBySlug((await params).slug);
+  const [game, site] = await Promise.all([getGameBySlug((await params).slug), getSiteConfig()]);
   if (!game) return { title: 'Không tìm thấy game', robots: { index: false, follow: false } };
-  const seo = resolveSeo(game);
+  const seo = resolveSeo(game, site);
   return {
     title: seo.title,
     description: seo.description,
     ...(seo.keywords.length ? { keywords: seo.keywords } : {}),
     alternates: { canonical: seo.canonical },
     robots: { ...seo.robots, googleBot: { ...seo.robots, 'max-image-preview': 'large' } },
-    openGraph: { type: 'website', siteName: 'ANT Play', locale: 'vi_VN', title: seo.ogTitle, description: seo.ogDescription, url: '/games/' + game.slug, images: [{ url: seo.image, alt: seo.name }] },
+    openGraph: { type: 'website', siteName: site.general.siteName, locale: 'vi_VN', title: seo.ogTitle, description: seo.ogDescription, url: '/games/' + game.slug, images: [{ url: seo.image, alt: seo.name }] },
     twitter: { card: 'summary_large_image', title: seo.ogTitle, description: seo.ogDescription, images: [seo.image] },
   };
 }
 
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [game, games] = await Promise.all([getGameBySlug(slug), getGames()]);
+  const [game, games, site] = await Promise.all([getGameBySlug(slug), getGames(), getSiteConfig()]);
   if (!game) notFound();
-  const seo = resolveSeo(game);
+  const seo = resolveSeo(game, site);
   const data = {
     '@context': 'https://schema.org', '@type': 'VideoGame', name: seo.name,
     url: absoluteUrl('/games/' + game.slug), image: absoluteUrl(seo.image),
