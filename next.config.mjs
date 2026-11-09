@@ -13,6 +13,9 @@ const nextConfig = {
       { source: '/:path*', headers: [
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      ] },
+      // Chặn nhúng portal vào site khác, trừ bản Apple Worm đi kèm (có CSP riêng bên dưới — tránh gửi 2 header CSP).
+      { source: '/((?!embed/apple-worm(?:/|$)|apple-worm/).*)', headers: [
         { key: 'Content-Security-Policy', value: "frame-ancestors 'self'" },
       ] },
       { source: '/embed/apple-worm', headers: embedHeaders },

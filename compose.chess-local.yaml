@@ -4,4 +4,4 @@ services:
     build:
       args:
         SITE_URL: http://localhost:11925
-        NEXT_PUBLIC_CHESS_EMBED_URL: http://localhost:11926/embed
+    # URL iframe của Chess Pro giờ cấu hình trong admin CMS (vd http://localhost:11926/embed cho bản local).

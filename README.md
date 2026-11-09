@@ -1,6 +1,8 @@
 # ANT Play
 
-Portal game Next.js (App Router + TypeScript + Tailwind) cho 4 game của ANT: City Bloxx, Apple Worm, Cờ Cá Ngựa, Block Puzzle. Mỗi game chạy trong iframe từ domain riêng.
+Portal game Next.js (App Router + TypeScript + Tailwind) cho các game của ANT. Mỗi game chạy trong iframe từ domain riêng.
+
+Danh sách game, URL iframe, nội dung VI/EN và SEO từng game được quản lý trong **admin CMS** (`CMS_Blog_Fe_main`) và lấy qua API (`web-game-server`, `GET /api/v1/public/games`). Thêm/sửa/ẩn game không cần build lại portal.
 
 ## Chạy project
 
@@ -37,8 +39,14 @@ PORT=3000
 BIND_ADDRESS=0.0.0.0
 APP_IMAGE=ant-play:latest
 TZ=Asia/Ho_Chi_Minh
+SITE_URL=http://localhost:3100
+API_INTERNAL_URL=http://host.docker.internal:3000
+REVALIDATE_SECRET=<chuỗi bí mật dùng chung với API>
 ```
 
+- `API_INTERNAL_URL` (runtime): địa chỉ API mà server Next.js gọi, không kèm `/api/v1`. Trong Docker phải là địa chỉ container truy cập được (`http://api:3000` nếu cùng network, `http://host.docker.internal:3000` nếu API chạy trên host) — `localhost` trong container là chính container web.
+- `REVALIDATE_SECRET` (runtime): phải trùng với `REVALIDATE_SECRET` của API. API gọi `POST /api/revalidate` sau mỗi lần sửa game để portal cập nhật ngay.
+- `SITE_URL` (build): origin công khai cho canonical/Open Graph/sitemap.
 - `APP_PORT`: port truy cập trên server/host. Ví dụ `8080` → `http://IP-SERVER:8080`.
 - `PORT`: port Next.js chạy bên trong container; Docker Compose tự map với `APP_PORT`.
 - `BIND_ADDRESS`: `0.0.0.0` để truy cập qua IP server, hoặc `127.0.0.1` nếu Nginx/Caddy trên cùng host đứng phía trước.
@@ -67,29 +75,28 @@ docker compose --env-file .env.production up -d --build
 ## Cấu trúc
 
 ```text
-app/                     Trang chủ, /games/[slug], 404, sitemap, robots
+app/                     Trang chủ, /games/[slug], 404, sitemap, robots, /api/revalidate (webhook)
 components/              Header (chỉ logo), footer, thẻ game
+lib/api/games.ts         Lấy danh sách/chi tiết game từ API (cache theo tag `games`, `game:<slug>`)
 modules/home/            Banner game nổi bật, "Chơi gần đây" (localStorage)
 modules/games/           Trang chơi: iframe tự tải, thanh tên + toàn màn hình dưới khung, "Chơi thêm"
-constants/games.ts       Danh sách 4 game + URL embed
-public/games/            Ảnh bìa (vuông) của từng game
+public/games/            Ảnh bìa có sẵn của các game ban đầu (CMS có thể trỏ tới hoặc dùng ảnh upload)
 public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 ```
 
 ## Game
 
-| Game | Trang | URL iframe mặc định | Env (đọc lúc build) |
-|---|---|---|---|
-| City Bloxx | /games/city-bloxx | https://citybloxx.antfootage.net/embed?screen=quick | NEXT_PUBLIC_CITY_BLOXX_EMBED_URL |
-| Apple Worm | /games/apple-worm | https://apple-worm.antfootage.net/embed/apple-worm | NEXT_PUBLIC_APPLE_WORM_EMBED_URL |
-| Cờ Cá Ngựa | /games/co-ca-ngua | https://ludo.antfootage.net/ | NEXT_PUBLIC_LUDO_EMBED_URL |
-| Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
-| Cờ Caro (Infinite XO) | /games/co-caro | https://xo.antfootage.net/ | NEXT_PUBLIC_XO_EMBED_URL |
-| Cờ Tướng (Xiangqi) | /games/co-tuong | https://co-tuong.antfootage.net/ | NEXT_PUBLIC_XIANGQI_EMBED_URL |
-| Cờ Vua (Chess Pro) | /games/chess-pro | https://chess.antfootage.net/embed | NEXT_PUBLIC_CHESS_EMBED_URL |
-| Khủng Long Chạy (Dinosaur Game) | /games/dinosaur-game | https://dino.antfootage.net/embed | NEXT_PUBLIC_DINO_EMBED_URL |
+Game được quản lý trong admin CMS: URL iframe, ảnh, badge, nổi bật (banner trang chủ), thứ tự, tỉ lệ khung, thuộc tính `allow`/`sandbox` của iframe, có hỗ trợ đổi ngôn ngữ hay không, nội dung VI/EN và SEO (title, description, keywords, Open Graph, canonical, robots). Chỉ game ở trạng thái **Published** hiện trên portal.
 
-Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
+Cập nhật dữ liệu:
+- Sau mỗi thay đổi, API gọi `POST /api/revalidate` (header `x-revalidate-secret`, body `{ "tags": ["games", "game:<slug>"] }`). Request kế tiếp vào trang nhận bản cũ và kích hoạt tạo lại; các request sau nhận bản mới.
+- Dữ liệu cũng tự làm mới tối đa 5 phút/lần nếu webhook bị lỡ.
+- API lỗi khi đang chạy: portal tiếp tục phục vụ bản đã cache gần nhất.
+- Build không cần API. Nếu lúc build không gọi được API, trang chủ/sitemap được build rỗng và trang game được tạo khi có request đầu tiên; webhook hoặc 5 phút sau sẽ làm mới.
+
+SEO trang game (trường để trống trong CMS dùng giá trị mặc định): title `{tên game} — Chơi online miễn phí`, description = mô tả ngắn, canonical `/games/{slug}`, ảnh chia sẻ = OG image của SEO → OG image của game → ảnh bìa. Sitemap bỏ qua game đặt `noindex`.
+
+Vào trang game là iframe tải ngay (không cần bấm Play). Game bật `passParentOrigin` (City Bloxx) nhận thêm `parentOrigin` để xác thực postMessage.
 
 Chess Pro thay thế Pool; URL cũ `/games/pool-9-ball` chuyển hướng tới `/games/chess-pro`. Game Chess chạy Docker từ `D:\ANT_1\chess-online-main` ở port `11926`. Domain `chess.antfootage.net` cần trỏ DNS và reverse proxy về port này (Caddyfile mẫu nằm trong thư mục game).
 
@@ -100,18 +107,20 @@ $env:APP_PORT='11925'
 docker compose -f compose.yaml -f compose.chess-local.yaml up -d --build
 ```
 
-Mở `http://localhost:11925/games/chess-pro`. Bản local dùng iframe `http://localhost:11926/embed`; compose mặc định vẫn dùng domain chính thức.
+Mở `http://localhost:11925/games/chess-pro`. Muốn iframe trỏ vào bản local thì đổi URL iframe của Chess Pro trong admin CMS thành `http://localhost:11926/embed`.
 
 ## Đa ngôn ngữ (VI / EN)
 
 - Nút **VI | EN** trên header. Lựa chọn lưu ở `localStorage` (`ant-lang`), mặc định tiếng Việt. Server luôn render tiếng Việt (SEO), trình duyệt đổi sang ngôn ngữ đã chọn sau khi tải.
-- Chữ giao diện nằm ở `constants/i18n.ts`; chữ của từng game nằm trong `text.vi` / `text.en` ở `constants/games.ts`.
-- Đồng bộ với game:
-  - Khi mở game, portal thêm `?lang=vi|en` vào URL iframe. Không cần ghi `lang` trong env.
+- Chữ giao diện nằm ở `constants/i18n.ts`; chữ của từng game (VI/EN) nhập trong admin CMS.
+- Đồng bộ với game (chỉ với game bật "hỗ trợ đổi ngôn ngữ" trong CMS):
+  - Khi mở game, portal thêm `?lang=vi|en` vào URL iframe.
   - Đổi ngôn ngữ khi game đang mở thì portal gửi `postMessage({ type: 'ant-play:locale', locale })` xuống iframe, game đổi ngay mà không tải lại.
   - City Bloxx, Cờ Cá Ngựa, Block Puzzle, Cờ Caro và Cờ Tướng hỗ trợ cả hai cách trên. Apple Worm là bản Flash đóng gói sẵn, chữ nằm trong file game nên không đổi được.
 
-Thêm game mới: thêm một mục vào `constants/games.ts` (kèm `text.vi` và `text.en`) + ảnh vuông vào `public/games/`. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
+## Thêm game
+
+Thêm game trong admin CMS: dán URL iframe → API kiểm tra nhúng được không → nhập nội dung VI/EN, ảnh, SEO → Publish. Portal hiện game mới mà không cần build lại. Site game phải cho phép nhúng: **không** gửi `X-Frame-Options: SAMEORIGIN/DENY`, và `Content-Security-Policy: frame-ancestors` phải chứa domain web game (Ludo và Block Puzzle dùng env `EMBED_FRAME_ANCESTORS`).
 
 ## Apple Worm và SEO
 Xem [APPLE-WORM-DEPLOY.md](./APPLE-WORM-DEPLOY.md).

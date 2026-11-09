@@ -7,7 +7,7 @@ Build production:
 
     docker compose up -d --build
 
-Đặt SITE_URL trong .env thành origin công khai của WEBGAME trước khi build để canonical, Open Graph và sitemap đúng domain. NEXT_PUBLIC_APPLE_WORM_EMBED_URL mặc định là URL production ở trên. Nếu muốn phục vụ game ngay trong Docker webgame, đặt NEXT_PUBLIC_APPLE_WORM_EMBED_URL=/embed/apple-worm rồi build lại. Các giá trị này được đóng vào build; thay đổi cần rebuild.
+Đặt SITE_URL trong .env thành origin công khai của WEBGAME trước khi build để canonical, Open Graph và sitemap đúng domain. URL iframe của Apple Worm cấu hình trong admin CMS (mặc định là URL production ở trên). Nếu muốn phục vụ game ngay trong Docker webgame, đổi URL iframe trong CMS thành /embed/apple-worm — không cần build lại.
 
 SEO được render trong head: title/description, canonical, robots, Open Graph, Twitter large image. /robots.txt, /sitemap.xml, JSON-LD VideoGame. Apple Worm có hero trên header, ảnh chia sẻ /seo/apple-worm-og.jpg 1200x630; webgame dùng /seo/ant-play-og.jpg. Không gán rating hoặc số lượt chơi giả.
 

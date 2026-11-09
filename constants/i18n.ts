@@ -7,8 +7,7 @@ export const localeNames: Record<Locale, string> = { vi: 'Tiếng Việt', en: '
 export const isLocale = (value: unknown): value is Locale => locales.includes(value as Locale);
 
 const vi = {
-  'site.tagline': 'ANT Play — Chơi game online miễn phí',
-  'site.home': 'ANT Play — Trang chủ',
+  'site.home': 'Trang chủ',
   'site.skip': 'Vào nội dung',
   'lang.label': 'Ngôn ngữ',
   'home.allGames': 'Tất cả game',
@@ -32,6 +31,7 @@ const vi = {
   'detail.info': 'Giới thiệu & cách chơi',
   'detail.author': 'Tác giả: {name}',
   'detail.more': 'Chơi thêm',
+  'detail.screenshots': 'Hình ảnh trong game',
   'detail.back': 'Tất cả game',
   'badge.new': 'MỚI',
   'badge.hot': 'HOT',
@@ -41,8 +41,7 @@ const vi = {
 export type MessageKey = keyof typeof vi;
 
 const en: Record<MessageKey, string> = {
-  'site.tagline': 'ANT Play — Free online games',
-  'site.home': 'ANT Play — Home',
+  'site.home': 'Home',
   'site.skip': 'Skip to content',
   'lang.label': 'Language',
   'home.allGames': 'All games',
@@ -66,6 +65,7 @@ const en: Record<MessageKey, string> = {
   'detail.info': 'About & how to play',
   'detail.author': 'Author: {name}',
   'detail.more': 'More games',
+  'detail.screenshots': 'Screenshots',
   'detail.back': 'All games',
   'badge.new': 'NEW',
   'badge.hot': 'HOT',

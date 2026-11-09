@@ -2,14 +2,14 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { getGame } from '@/constants/games';
+import type { Game } from '@/types/game';
 import { useRecentGames } from '@/hooks/use-recent';
 import { useT } from '@/hooks/use-locale';
 
-/** "Chơi gần đây" — chỉ hiện khi trình duyệt đã từng mở game. */
-export function RecentGames() {
+/** "Chơi gần đây" — chỉ hiện khi trình duyệt đã từng mở game (bỏ qua game đã bị gỡ khỏi portal). */
+export function RecentGames({ games }: { games: Game[] }) {
   const { locale, t } = useT();
-  const recent = useRecentGames().flatMap((slug) => getGame(slug) ?? []);
+  const recent = useRecentGames().flatMap((slug) => games.find((game) => game.slug === slug) ?? []);
   if (!recent.length) return null;
   return (
     <section aria-labelledby="recent-games" className="section">

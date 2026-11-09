@@ -28,10 +28,10 @@ export function GamePlayer({ game }: { game: Game }) {
 
   useEffect(() => { addRecentGame(game.slug); }, [game.slug]);
 
-  // Game hỗ trợ (City Bloxx, Cờ Cá Ngựa, Block Puzzle) nghe { type: 'ant-play:locale' } và đổi ngôn ngữ ngay.
+  // Game hỗ trợ đổi ngôn ngữ (bật trong admin) nghe { type: 'ant-play:locale' } và đổi ngay, không tải lại.
   useEffect(() => {
-    if (loaded && frameOrigin) iframe.current?.contentWindow?.postMessage({ type: 'ant-play:locale', locale }, frameOrigin);
-  }, [locale, loaded, frameOrigin]);
+    if (game.supportsLocale && loaded && frameOrigin) iframe.current?.contentWindow?.postMessage({ type: 'ant-play:locale', locale }, frameOrigin);
+  }, [game.supportsLocale, locale, loaded, frameOrigin]);
 
   useEffect(() => {
     const onChange = () => setIsFullscreen(document.fullscreenElement === frame.current);
@@ -66,7 +66,8 @@ export function GamePlayer({ game }: { game: Game }) {
             ref={iframe}
             src={src}
             title={text.title}
-            allow="autoplay; fullscreen; gamepad; clipboard-write; web-share"
+            allow={game.iframeAllow.length ? game.iframeAllow.join('; ') : undefined}
+            sandbox={game.iframeSandbox ?? undefined}
             allowFullScreen
             onLoad={() => { setLoaded(true); iframe.current?.focus({ preventScroll: true }); }}
           />
@@ -97,7 +98,7 @@ const noopSubscribe = () => () => {};
 
 function embedSrc(game: Game, origin: string, locale: Locale) {
   const url = new URL(game.embedUrl, origin);
-  url.searchParams.set('lang', locale);
+  if (game.supportsLocale) url.searchParams.set('lang', locale);
   if (game.passParentOrigin) url.searchParams.set('parentOrigin', origin);
   return url.toString();
 }
