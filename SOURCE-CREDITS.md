@@ -9,6 +9,7 @@
 - Logo / favicon: do người dùng cung cấp trong `assets/`.
 - Font Nunito: Google Fonts, SIL Open Font License (`public/fonts/OFL.txt`).
 - Icon UI: Lucide (ISC) qua `lucide-react`.
-- Ảnh bìa 16:9 `public/games/wide/*.svg`: vẽ riêng cho portal (dùng cho thẻ game và banner trang chủ).
-- Bi-a 9 Bi (9 Ball Pool): bản game tĩnh trong project `pool-9-ball-main`, chạy tại https://9ball.antfootage.net/embed.
+- Ảnh bìa 16:9 `public/games/wide/*-thumbnail.webp`: ảnh AI tạo riêng cho portal (dùng cho thẻ game và banner trang chủ).
+- Cờ Vua (Chess Pro): bản game tĩnh trong project `D:\ANT_1\chess-online-main`, chạy tại https://chess.antfootage.net/embed.
+- Ảnh `public/games/chess-pro.png`: ảnh chụp trực tiếp Chess Pro sau nước 1. e4 c5; thông tin giấy phép của quân cờ, font và thư viện được giữ trong HTML game gốc.
 - Khủng Long Chạy (Dinosaur Game): bản game tĩnh trong project `dinosaur-game-main`, chạy tại https://dino.antfootage.net/embed.

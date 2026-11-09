@@ -86,10 +86,21 @@ public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
 | Block Puzzle | /games/block-puzzle | https://block-puzzle.antfootage.net/play | NEXT_PUBLIC_BLOCK_PUZZLE_EMBED_URL |
 | Cờ Caro (Infinite XO) | /games/co-caro | https://xo.antfootage.net/ | NEXT_PUBLIC_XO_EMBED_URL |
 | Cờ Tướng (Xiangqi) | /games/co-tuong | https://co-tuong.antfootage.net/ | NEXT_PUBLIC_XIANGQI_EMBED_URL |
-| Bi-a 9 Bi (9 Ball Pool) | /games/pool-9-ball | https://9ball.antfootage.net/embed | NEXT_PUBLIC_POOL_EMBED_URL |
+| Cờ Vua (Chess Pro) | /games/chess-pro | https://chess.antfootage.net/embed | NEXT_PUBLIC_CHESS_EMBED_URL |
 | Khủng Long Chạy (Dinosaur Game) | /games/dinosaur-game | https://dino.antfootage.net/embed | NEXT_PUBLIC_DINO_EMBED_URL |
 
 Vào trang game là iframe tải ngay (không cần bấm Play). City Bloxx nhận thêm `parentOrigin` để xác thực postMessage.
+
+Chess Pro thay thế Pool; URL cũ `/games/pool-9-ball` chuyển hướng tới `/games/chess-pro`. Game Chess chạy Docker từ `D:\ANT_1\chess-online-main` ở port `11926`. Domain `chess.antfootage.net` cần trỏ DNS và reverse proxy về port này (Caddyfile mẫu nằm trong thư mục game).
+
+Để xem portal cùng Chess trên máy, chạy PowerShell trong thư mục portal:
+
+```powershell
+$env:APP_PORT='11925'
+docker compose -f compose.yaml -f compose.chess-local.yaml up -d --build
+```
+
+Mở `http://localhost:11925/games/chess-pro`. Bản local dùng iframe `http://localhost:11926/embed`; compose mặc định vẫn dùng domain chính thức.
 
 ## Đa ngôn ngữ (VI / EN)
 
