@@ -20,7 +20,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     logoUrl: '/brand/logo128.png',
     faviconUrl: '/brand/logo128.png',
     appleTouchIconUrl: '',
-    ogImageUrl: '/seo/ant-play-og.jpg',
+    ogImageUrl: '/seo/zozo-og.jpg',
     themeColor: '#111219',
   },
   seo: {
