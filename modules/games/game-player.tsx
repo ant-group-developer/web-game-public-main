@@ -3,14 +3,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
-import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Columns2, Maximize, Minimize, RectangleHorizontal, RotateCcw } from 'lucide-react';
 import type { Game } from '@/types/game';
 import { addRecentGame } from '@/hooks/use-recent';
 import { readLocale, useT } from '@/hooks/use-locale';
+import { usePlayTracking } from '@/hooks/use-play-tracking';
 import type { Locale } from '@/constants/i18n';
 
-/** Khung chơi: iframe tải ngay khi vào trang. Desktop: thanh tên + nút dưới khung. Mobile: thanh gọn phía trên. */
-export function GamePlayer({ game }: { game: Game }) {
+/**
+ * Khung chơi: iframe tải ngay khi vào trang. Desktop: thanh tên + nút dưới khung (tải lại, chế độ ngang, toàn màn hình).
+ * Mobile: thanh gọn phía trên, không có chế độ ngang (khung game đã chiếm gần hết màn hình).
+ */
+export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theater: boolean; onToggleMode: () => void }) {
   const { locale, t } = useT();
   const text = game.text[locale];
   const frame = useRef<HTMLDivElement>(null);
@@ -27,6 +31,7 @@ export function GamePlayer({ game }: { game: Game }) {
   const frameOrigin = src ? new URL(src).origin : null;
 
   useEffect(() => { addRecentGame(game.slug); }, [game.slug]);
+  usePlayTracking(game.slug, loaded);
 
   // Game hỗ trợ đổi ngôn ngữ (bật trong admin) nghe { type: 'ant-play:locale' } và đổi ngay, không tải lại.
   useEffect(() => {
@@ -46,9 +51,15 @@ export function GamePlayer({ game }: { game: Game }) {
     else if (src) window.open(src, '_blank', 'noopener'); // iPhone Safari: no element fullscreen
   }
   function reload() { setLoaded(false); setFrameLocale(locale); setReloadKey((k) => k + 1); }
+  function toggleMode() {
+    onToggleMode();
+    // Giữ bàn phím trong game sau khi bấm nút.
+    window.requestAnimationFrame(() => iframe.current?.focus({ preventScroll: true }));
+  }
 
   const fullscreenLabel = t(isFullscreen ? 'play.exitFullscreen' : 'play.fullscreen');
   const FullscreenIcon = isFullscreen ? Minimize : Maximize;
+  const ModeIcon = theater ? Columns2 : RectangleHorizontal;
 
   return (
     <section className="player-wrap" aria-label={t('play.game', { title: text.title })}>
@@ -88,6 +99,10 @@ export function GamePlayer({ game }: { game: Game }) {
           <span>{text.tags.join(' · ')}</span>
         </div>
         <button type="button" className="icon-btn" onClick={reload} aria-label={t('play.reload')} title={t('play.reload')}><RotateCcw size={18} strokeWidth={2.4} /></button>
+        <button type="button" className="mode-button" onClick={toggleMode} aria-pressed={theater} title={t('play.modeKey')}>
+          <ModeIcon size={18} strokeWidth={2.4} aria-hidden="true" />
+          <span>{t(theater ? 'play.default' : 'play.theater')}</span>
+        </button>
         <button type="button" className="play-button play-button-sm" onClick={toggleFullscreen}><FullscreenIcon size={18} strokeWidth={2.4} aria-hidden="true" /><span>{fullscreenLabel}</span></button>
       </div>
     </section>

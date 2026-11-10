@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useT } from '@/hooks/use-locale';
+import { CategoryNav } from './category-nav';
 import { LanguageSwitcher } from './language-switcher';
 import { SearchBox } from './search-box';
 import { useSite } from './site-provider';
@@ -18,7 +19,7 @@ function BrandName({ name }: { name: string }) {
   );
 }
 
-/** Header: logo trái, ô tìm game giữa, chọn ngôn ngữ phải. Mọi control cao bằng nhau và căn giữa theo trục dọc. */
+/** Header: logo trái, ô tìm game giữa, chọn ngôn ngữ phải; hàng chip danh mục bên dưới. */
 export function SiteHeader() {
   const { t } = useT();
   const { siteName, logoUrl } = useSite();
@@ -33,6 +34,7 @@ export function SiteHeader() {
         <SearchBox />
         <LanguageSwitcher />
       </div>
+      <CategoryNav />
     </header>
   );
 }
