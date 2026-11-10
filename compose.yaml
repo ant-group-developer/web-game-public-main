@@ -30,6 +30,8 @@ services:
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:-}
       # API_LOG=1: ghi log mọi lần gọi API vào `docker logs` (lỗi thì luôn ghi).
       API_LOG: ${API_LOG:-}
+      # Domain ảnh trên Cloudflare R2 (vd https://assets.zozo.bio) — chỉ để preconnect, không bắt buộc.
+      ASSETS_ORIGIN: ${ASSETS_ORIGIN:-}
     stop_grace_period: 20s
     logging:
       driver: json-file

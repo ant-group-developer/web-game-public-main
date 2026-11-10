@@ -35,11 +35,21 @@ export async function generateViewport(): Promise<Viewport> {
   return { width: 'device-width', initialScale: 1, themeColor: branding.themeColor, viewportFit: 'cover' };
 }
 
+const ASSETS_ORIGIN = (() => {
+  try {
+    return process.env.ASSETS_ORIGIN ? new URL(process.env.ASSETS_ORIGIN).origin : '';
+  } catch {
+    return '';
+  }
+})();
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const [{ general, branding }, categories] = await Promise.all([getSiteConfig(), getNavCategories()]);
   const navCategories = categories.map((c) => ({ slug: c.slug, name: { vi: c.text.vi.name, en: c.text.en.name }, count: c.gameCount }));
   return (
     <html lang="vi">
+      {/* Ảnh game nằm trên Cloudflare R2 (ASSETS_ORIGIN, vd https://assets.zozo.bio): mở sẵn kết nối để ảnh tải nhanh hơn. */}
+      {ASSETS_ORIGIN && <head><link rel="preconnect" href={ASSETS_ORIGIN} /></head>}
       <body>
         <SiteProvider value={{ siteName: general.siteName, tagline: general.tagline, footerText: general.footerText, logoUrl: branding.logoUrl, navCategories }}>
           <SiteHeader />
