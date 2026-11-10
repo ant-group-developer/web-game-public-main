@@ -6,8 +6,9 @@ import { revalidateTag } from 'next/cache';
  *   POST /api/revalidate  · header x-revalidate-secret: <REVALIDATE_SECRET>  · body { "tags": ["games", "game:<slug>"] }
  *   Danh mục đổi → tags "categories", "category:<slug>".
  *   Cấu hình web (tên, logo, favicon, SEO trang chủ) đổi → tag "site-config" (layout của mọi trang).
- * Đánh dấu cache cũ (stale-while-revalidate, profile "max"): request kế tiếp nhận bản cũ và kích hoạt tạo lại,
- * các request sau đó nhận bản mới. Nếu API lỗi lúc tạo lại thì Next tiếp tục phục vụ bản cũ.
+ * Hết hạn NGAY ({ expire: 0 }): request kế tiếp chờ lấy dữ liệu mới từ API rồi mới trả trang, nên sửa/publish
+ * trong admin là F5 thấy luôn. Đánh đổi: nếu đúng lúc đó API lỗi thì trang đó lỗi (thay vì hiện bản cũ).
+ * Mặc định vẫn cache 5 phút (REVALIDATE_SECONDS trong lib/api) để không gọi API mỗi request.
  */
 export const dynamic = 'force-dynamic';
 
@@ -34,9 +35,8 @@ export async function POST(request: Request) {
     return Response.json({ revalidated: false, message: `Body must be { tags: string[] } (1–${MAX_TAGS} items matching ${TAG_PATTERN})` }, { status: 400 });
   }
 
-  // Chỉ dùng revalidateTag(…, 'max'): trang/sitemap đã cache (kể cả bản build lúc API chưa chạy) đều mang tag `games`.
-  // Không dùng revalidatePath: nó hết hạn ngay, nếu lúc đó API lỗi thì người dùng nhận 500 thay vì bản cũ.
+  // Theo tag (không theo path): trang/sitemap đã cache, kể cả bản build lúc API chưa chạy, đều mang tag `games`.
   const unique = [...new Set(tags as string[])];
-  for (const tag of unique) revalidateTag(tag, 'max');
+  for (const tag of unique) revalidateTag(tag, { expire: 0 });
   return Response.json({ revalidated: true, tags: unique });
 }
