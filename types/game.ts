@@ -8,7 +8,25 @@ export interface GameText {
   description: string;
   about: string[];
   instructions: string[];
+  /** Câu hỏi thường gặp (FAQPage JSON-LD). */
+  faq: FaqItem[];
 }
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+/** Danh mục mà game thuộc về (danh mục chính đứng đầu). */
+export interface GameCategoryRef {
+  slug: string;
+  name: Record<Locale, string>;
+  isPrimary: boolean;
+}
+
+/** Thứ tự game: popular = lượt chơi 30 ngày, plays = tổng lượt chơi, newest = ngày ra mắt, name = A→Z, manual = admin xếp. */
+export const GAME_SORTS = ['popular', 'newest', 'plays', 'name', 'manual'] as const;
+export type GameSort = (typeof GAME_SORTS)[number];
 
 /** SEO riêng của game cho một ngôn ngữ. Trường null thì dùng giá trị mặc định suy ra từ nội dung game. */
 export interface GameSeo {
@@ -53,6 +71,12 @@ export interface Game {
   /** Giá trị thuộc tính `sandbox`; null = không sandbox. */
   iframeSandbox: string | null;
   author: string | null;
+  /** Ngày ra mắt YYYY-MM-DD (API đã thay bằng ngày publish nếu trống). */
+  releasedAt: string | null;
+  publishedAt: string | null;
+  /** Lượt chơi (job thống kê cập nhật mỗi 10 phút). */
+  plays: { total: number; last30d: number };
+  categories: GameCategoryRef[];
   text: Record<Locale, GameText>;
   seo: Record<Locale, GameSeo>;
   updatedAt: string;

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getGameBySlug, getGames } from '@/lib/api/games';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { getGameBySlug, getGames, resolveRedirect } from '@/lib/api/games';
 import { getSiteConfig } from '@/lib/api/site';
 import type { SiteConfig } from '@/types/site';
 import { GameDetail } from '@/modules/games/game-detail';
 import { absoluteUrl } from '@/helpers/seo';
+import { relatedGames } from '@/helpers/games';
 import type { Game } from '@/types/game';
 
 // Game mới tạo trong admin có trang ngay, không cần build lại.
@@ -55,18 +56,42 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [game, games, site] = await Promise.all([getGameBySlug(slug), getGames(), getSiteConfig()]);
-  if (!game) notFound();
+  if (!game) {
+    // Slug cũ (đã đổi trong admin) → 301 sang slug mới để giữ link và SEO.
+    const target = await resolveRedirect('game', slug);
+    if (target) permanentRedirect(`/games/${target}`);
+    notFound();
+  }
   const seo = resolveSeo(game, site);
-  const data = {
-    '@context': 'https://schema.org', '@type': 'VideoGame', name: seo.name,
-    url: absoluteUrl('/games/' + game.slug), image: absoluteUrl(seo.image),
-    ...(game.screenshots.length ? { screenshot: game.screenshots.map((src) => absoluteUrl(src)) } : {}),
-    description: seo.description, genre: game.text.vi.tags, inLanguage: ['vi', 'en'],
-    gamePlatform: 'Web browser', operatingSystem: 'Any', isAccessibleForFree: true,
-    ...(game.author ? { author: { '@type': 'Organization', name: game.author } } : {}),
-  };
+  const url = absoluteUrl('/games/' + game.slug);
+  const primary = game.categories.find((c) => c.isPrimary) ?? game.categories[0];
+  const faq = game.text.vi.faq;
+  const data = [
+    {
+      '@context': 'https://schema.org', '@type': 'VideoGame', name: seo.name,
+      url, image: absoluteUrl(seo.image),
+      ...(game.screenshots.length ? { screenshot: game.screenshots.map((src) => absoluteUrl(src)) } : {}),
+      description: seo.description,
+      genre: game.categories.length ? game.categories.map((c) => c.name.vi) : game.text.vi.tags,
+      inLanguage: ['vi', 'en'],
+      gamePlatform: 'Web browser', operatingSystem: 'Any', isAccessibleForFree: true,
+      ...(game.releasedAt ? { datePublished: game.releasedAt } : {}),
+      ...(game.updatedAt ? { dateModified: game.updatedAt } : {}),
+      ...(game.author ? { author: { '@type': 'Organization', name: game.author } } : {}),
+    },
+    {
+      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: absoluteUrl('/') },
+        ...(primary ? [{ '@type': 'ListItem', position: 2, name: primary.name.vi, item: absoluteUrl(`/categories/${primary.slug}`) }] : []),
+        { '@type': 'ListItem', position: primary ? 3 : 2, name: seo.name, item: url },
+      ],
+    },
+    ...(faq.length
+      ? [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }]
+      : []),
+  ];
   // Escape "<" để nội dung từ CMS không thể đóng thẻ </script>.
   const jsonLd = JSON.stringify(data).replace(/</g, '\\u003c');
-  const others = games.filter((item) => item.slug !== game.slug);
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /><GameDetail game={game} others={others} /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /><GameDetail game={game} related={relatedGames(game, games)} /></>;
 }

@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
-import { getGames } from '@/lib/api/games';
+import { getCategories, getGames } from '@/lib/api/games';
 import { getSiteConfig } from '@/lib/api/site';
 import { absoluteUrl, siteUrl } from '@/helpers/seo';
 import { HomeContent } from '@/modules/home/home-content';
 
 // Tiêu đề / mô tả trang chủ = mặc định của layout (cấu hình "SEO trang chủ" trong admin).
+// `?sort=` chỉ đổi thứ tự hiển thị phía client nên canonical luôn là "/".
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 
 export default async function HomePage() {
-  const [games, site] = await Promise.all([getGames(), getSiteConfig()]);
+  const [games, categories, site] = await Promise.all([getGames(), getCategories().catch(() => []), getSiteConfig()]);
   const jsonLd = JSON.stringify([
     { '@context': 'https://schema.org', '@type': 'WebSite', name: site.general.siteName, url: siteUrl, description: site.seo.homeDescription.vi, inLanguage: ['vi', 'en'] },
     { '@context': 'https://schema.org', '@type': 'Organization', name: site.general.siteName, url: siteUrl, logo: absoluteUrl(site.branding.logoUrl) },
@@ -16,7 +17,7 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <HomeContent games={games} />
+      <HomeContent games={games} categories={categories} />
     </>
   );
 }

@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteProvider } from '@/components/site-provider';
 import { getSiteConfig } from '@/lib/api/site';
+import { getNavCategories } from '@/lib/api/games';
 import '@/styles/globals.css';
 import { siteUrl } from '@/helpers/seo';
 
@@ -35,11 +36,12 @@ export async function generateViewport(): Promise<Viewport> {
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const { general, branding } = await getSiteConfig();
+  const [{ general, branding }, categories] = await Promise.all([getSiteConfig(), getNavCategories()]);
+  const navCategories = categories.map((c) => ({ slug: c.slug, name: { vi: c.text.vi.name, en: c.text.en.name }, count: c.gameCount }));
   return (
     <html lang="vi">
       <body>
-        <SiteProvider value={{ siteName: general.siteName, tagline: general.tagline, footerText: general.footerText, logoUrl: branding.logoUrl }}>
+        <SiteProvider value={{ siteName: general.siteName, tagline: general.tagline, footerText: general.footerText, logoUrl: branding.logoUrl, navCategories }}>
           <SiteHeader />
           <main id="main">{children}</main>
           <SiteFooter />
