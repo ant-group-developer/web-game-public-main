@@ -1,5 +1,8 @@
 import 'server-only';
 import type { SiteConfig } from '@/types/site';
+import { recall, remember } from './last-good';
+
+const LAST_GOOD_KEY = 'site-config';
 
 /**
  * Tên web, logo, favicon, SEO trang chủ — lấy từ API, cache theo tag `site-config`
@@ -44,9 +47,11 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     if (!res.ok) throw new Error(`site-config responded ${res.status}`);
     const body = (await res.json()) as { success: boolean; data: SiteConfig };
     if (!body?.success || !body.data?.general) throw new Error('site-config: unexpected body');
-    return body.data;
+    return remember(LAST_GOOD_KEY, body.data);
   } catch (error) {
-    console.warn('[site-config] dùng cấu hình mặc định:', String(error));
-    return DEFAULT_SITE_CONFIG;
+    // Ưu tiên cấu hình đọc được gần nhất; chỉ dùng mặc định ("ANT Play") khi chưa từng đọc được.
+    const last = recall<SiteConfig>(LAST_GOOD_KEY);
+    console.warn(`[site-config] ${last ? 'dùng cấu hình đọc được gần nhất' : 'dùng cấu hình mặc định'}:`, String(error));
+    return last ?? DEFAULT_SITE_CONFIG;
   }
 }

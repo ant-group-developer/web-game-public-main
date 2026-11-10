@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Category, CategoryDetail } from '@/types/category';
 import type { Game } from '@/types/game';
+import { recall, remember } from './last-good';
 
 /**
  * Dữ liệu game / danh mục lấy từ API (admin CMS), cache theo tag để API gọi webhook /api/revalidate là cập nhật ngay.
@@ -18,18 +19,33 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 interface Envelope<T> { success: boolean; data: T }
 
 const isBuildPhase = () => process.env.NEXT_PHASE === 'phase-production-build';
+/** API_LOG=1: ghi log mọi lần gọi API (Next gọi API từ server nên tab Network của trình duyệt không thấy). */
+const LOG_ALL = process.env.API_LOG === '1';
 
 async function request<T>(path: string, tags: string[]): Promise<T | null> {
-  const res = await fetch(`${API_BASE}/api/v1${path}`, {
-    next: { tags, revalidate: REVALIDATE_SECONDS },
-    headers: { accept: 'application/json' },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`API ${path} responded ${res.status}`);
-  const body = (await res.json()) as Envelope<T>;
-  if (!body?.success) throw new Error(`API ${path} returned an unsuccessful envelope`);
-  return body.data;
+  const started = Date.now();
+  try {
+    const res = await fetch(`${API_BASE}/api/v1${path}`, {
+      next: { tags, revalidate: REVALIDATE_SECONDS },
+      headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    // Rất nhanh (vài ms) thường là lấy từ cache dữ liệu của Next, không thật sự gọi API.
+    if (LOG_ALL) console.log(`[api] GET ${API_BASE}/api/v1${path} → ${res.status} ${Date.now() - started}ms`);
+    const isJson = (res.headers.get('content-type') ?? '').includes('application/json');
+    // 404 JSON của API = không có bản ghi. 404 HTML (nginx, sai domain API) là lỗi cấu hình, không phải "không có game".
+    if (res.status === 404 && isJson) return null;
+    if (!res.ok || !isJson) throw new Error(`API ${path} responded ${res.status}${isJson ? '' : ' (không phải JSON — kiểm tra API_INTERNAL_URL)'}`);
+    const body = (await res.json()) as Envelope<T>;
+    if (!body?.success) throw new Error(`API ${path} returned an unsuccessful envelope`);
+    return remember(path, body.data);
+  } catch (error) {
+    const last = recall<T>(path);
+    // Lỗi luôn được ghi log (không cần API_LOG) để `docker logs` cho biết vì sao gọi API thất bại.
+    console.warn(`[api] GET ${API_BASE}/api/v1${path} lỗi sau ${Date.now() - started}ms: ${String(error)}${last !== undefined ? ' → dùng dữ liệu đọc được gần nhất' : ''}`);
+    if (last !== undefined) return last;
+    throw error;
+  }
 }
 
 /** Như request() nhưng lúc build (API chưa chạy) trả về `fallback` thay vì ném lỗi. */

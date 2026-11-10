@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
       args:
         SITE_URL: ${SITE_URL:-http://localhost:3100}
+        # Để bước build dựng sẵn trang bằng dữ liệu thật (thiếu thì trang chủ sau deploy trống tới khi làm mới).
+        API_INTERNAL_URL: ${API_INTERNAL_URL:-}
     init: true
     restart: unless-stopped
     ports:
@@ -26,6 +28,8 @@ services:
       API_INTERNAL_URL: ${API_INTERNAL_URL:-http://host.docker.internal:3000}
       # Trùng với REVALIDATE_SECRET của API để webhook /api/revalidate được chấp nhận.
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:-}
+      # API_LOG=1: ghi log mọi lần gọi API vào `docker logs` (lỗi thì luôn ghi).
+      API_LOG: ${API_LOG:-}
     stop_grace_period: 20s
     logging:
       driver: json-file

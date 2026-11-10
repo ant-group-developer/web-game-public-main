@@ -11,8 +11,11 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 FROM base AS builder
 ARG SITE_URL=http://localhost:3100
 ENV SITE_URL=$SITE_URL
-# Danh sách game lấy từ API lúc chạy (API_INTERNAL_URL là biến runtime, không cần lúc build).
-# Build không cần API: nếu không gọi được thì trang game được tạo khi có request đầu tiên.
+# Build dựng sẵn trang chủ / danh mục / trang game bằng dữ liệu API. Không truyền API_INTERNAL_URL (hoặc API không
+# gọi được lúc build) thì build vẫn qua nhưng các trang đó dựng với 0 game + cấu hình mặc định, và mỗi lần deploy
+# người dùng thấy trang trống cho tới khi Next làm mới (≤ 5 phút hoặc khi admin sửa). Vì vậy nên truyền URL API thật.
+ARG API_INTERNAL_URL=
+ENV API_INTERNAL_URL=$API_INTERNAL_URL
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
