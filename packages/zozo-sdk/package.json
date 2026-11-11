@@ -1,0 +1,14 @@
+{
+  "name": "@zozo/sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ZOZO ID + locale SDK for games embedded in the ZOZO portal",
+  "type": "module",
+  "main": "dist/zozo-sdk.mjs",
+  "module": "dist/zozo-sdk.mjs",
+  "browser": "dist/zozo-sdk.min.js",
+  "files": ["dist"],
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}

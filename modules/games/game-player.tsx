@@ -8,6 +8,7 @@ import type { Game } from '@/types/game';
 import { addRecentGame } from '@/hooks/use-recent';
 import { readLocale, useT } from '@/hooks/use-locale';
 import { usePlayTracking } from '@/hooks/use-play-tracking';
+import { useZozoBridge } from '@/hooks/use-zozo-bridge';
 import type { Locale } from '@/constants/i18n';
 
 /**
@@ -32,6 +33,8 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
 
   useEffect(() => { addRecentGame(game.slug); }, [game.slug]);
   usePlayTracking(game.slug, loaded);
+  // Game dùng ZOZO SDK xin token / mở đăng nhập qua postMessage.
+  useZozoBridge(iframe, frameOrigin);
 
   // Game hỗ trợ đổi ngôn ngữ (bật trong admin) nghe { type: 'ant-play:locale' } và đổi ngay, không tải lại.
   useEffect(() => {

@@ -40,6 +40,7 @@ BIND_ADDRESS=0.0.0.0
 APP_IMAGE=ant-play:latest
 TZ=Asia/Ho_Chi_Minh
 SITE_URL=http://localhost:3100
+NEXT_PUBLIC_API_URL=https://api.zozo.bio
 API_INTERNAL_URL=http://host.docker.internal:3000
 REVALIDATE_SECRET=<chuỗi bí mật dùng chung với API>
 ```
@@ -47,6 +48,7 @@ REVALIDATE_SECRET=<chuỗi bí mật dùng chung với API>
 - `API_INTERNAL_URL` (runtime): địa chỉ API mà server Next.js gọi, không kèm `/api/v1`. Trong Docker phải là địa chỉ container truy cập được (`http://api:3000` nếu cùng network, `http://host.docker.internal:3000` nếu API chạy trên host) — `localhost` trong container là chính container web.
 - `REVALIDATE_SECRET` (runtime): phải trùng với `REVALIDATE_SECRET` của API. API gọi `POST /api/revalidate` sau mỗi lần sửa game để portal cập nhật ngay.
 - `SITE_URL` (build): origin công khai cho canonical/Open Graph/sitemap.
+- `NEXT_PUBLIC_API_URL` (build): origin API mà **trình duyệt** gọi để đăng nhập ZOZO ID (không kèm `/api/v1`), vd `https://api.zozo.bio`. Nhúng vào JS lúc build — đổi thì build lại. Trống: production dùng `https://api.zozo.bio`, `npm run dev` dùng `http://localhost:3000`.
 - `APP_PORT`: port truy cập trên server/host. Ví dụ `8080` → `http://IP-SERVER:8080`.
 - `PORT`: port Next.js chạy bên trong container; Docker Compose tự map với `APP_PORT`.
 - `BIND_ADDRESS`: `0.0.0.0` để truy cập qua IP server, hoặc `127.0.0.1` nếu Nginx/Caddy trên cùng host đứng phía trước.
@@ -76,13 +78,40 @@ docker compose --env-file .env.production up -d --build
 
 ```text
 app/                     Trang chủ, /games/[slug], 404, sitemap, robots, /api/revalidate (webhook)
-components/              Header (chỉ logo), footer, thẻ game
+components/              Header (logo, tìm kiếm, ngôn ngữ, tài khoản), footer, thẻ game
 lib/api/games.ts         Lấy danh sách/chi tiết game từ API (cache theo tag `games`, `game:<slug>`)
 modules/home/            Banner game nổi bật, "Chơi gần đây" (localStorage)
 modules/games/           Trang chơi: iframe tự tải, thanh tên + toàn màn hình dưới khung, "Chơi thêm"
 public/games/            Ảnh bìa có sẵn của các game ban đầu (CMS có thể trỏ tới hoặc dùng ảnh upload)
 public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
+lib/zozo/                Phiên ZOZO ID phía trình duyệt, Google Identity Services, returnTo
+modules/auth/            /dang-nhap, /quen-mat-khau, /dat-lai-mat-khau, /ho-so, hộp thoại đăng nhập
+hooks/use-zozo-bridge.ts Cầu nối postMessage cho game trong iframe
+packages/zozo-sdk/       SDK cho game (ESM + IIFE `window.ZOZO`), xem README trong thư mục
 ```
+
+## Tài khoản người chơi (ZOZO ID)
+
+Một tài khoản dùng chung cho portal và mọi game. API: `web-game-server` (`docs/zozo-id-api.md`).
+
+- Vào trang, trình duyệt gọi `POST /auth/refresh` (cookie `zozo_rt`) để biết người chơi. **Không** tự tạo khách khi chỉ xem trang; khách chỉ được tạo khi game trong iframe xin token.
+- Access token chỉ giữ trong bộ nhớ, tự refresh trước khi hết hạn; refresh chạy một lần tại một thời điểm và khoá giữa các tab (API xoay refresh token mỗi lần dùng).
+- Đăng nhập: Google là chính (nút chính thức + One Tap của Google Identity Services, chỉ tải ở `/dang-nhap` và hộp thoại đăng nhập). Client ID lấy từ `GET /auth/config`; `null` thì ẩn Google, chỉ còn email. Email/mật khẩu nằm dưới "Hoặc dùng email". Đang là khách mà đăng nhập / đăng ký (cả Google): API trả `choiceRequired` → hộp thoại "Gộp tiến trình?" → gửi lại đúng request kèm `guestChoice` (`merge`: khách vào tài khoản, hiện thông báo nhỏ; `separate`: tài khoản dùng id riêng, khách giữ nguyên). Đóng hộp thoại = huỷ đăng nhập.
+- Trang: `/dang-nhap` (`?tab=dang-ky`, `?returnTo=` — chỉ cùng origin, `https://*.zozo.bio`, hoặc `http://localhost:*` khi chạy local), `/quen-mat-khau`, `/dat-lai-mat-khau?token=`, `/ho-so`.
+- Header: chưa có phiên → "Đăng nhập"; khách → "Lưu tiến trình" + avatar; tài khoản → avatar + tên, menu Hồ sơ / Đăng xuất.
+
+### Cầu nối với game trong iframe
+
+Portal chỉ nhận message từ đúng iframe game, origin khớp `^https://([a-z0-9-]+\.)?zozo\.bio$` (dev hoặc portal chạy trên localhost: thêm `http://localhost:*`). Message `ant-play:locale` giữ nguyên như cũ.
+
+| Hướng | Message | Ý nghĩa |
+|---|---|---|
+| game → portal | `{type:'zozo:token-request', id}` | Xin access token. Portal trả `{type:'zozo:token', id, accessToken, expiresIn, player}` hoặc `{type:'zozo:token', id, error, status}`; chưa có phiên thì tạo khách. |
+| game → portal | `{type:'zozo:login', mode?}` (`login` / `register`) | Mở hộp thoại đăng nhập trên game. Đóng mà không đăng nhập → `{type:'zozo:login-cancel'}`. |
+| game → portal | `{type:'zozo:logout'}` | Portal đăng xuất. |
+| portal → game | `{type:'zozo:auth-changed'}` | Người chơi đổi (đăng nhập / đăng ký / đăng xuất / đổi tên): game xin token lại. |
+
+Game trong portal không tự refresh mà xin token qua cầu nối, để portal là nơi duy nhất xoay refresh token. SDK làm sẵn việc này: `packages/zozo-sdk` (`npm run build:sdk`).
 
 ## Game
 

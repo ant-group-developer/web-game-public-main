@@ -5,6 +5,7 @@ import '@fontsource-variable/baloo-2';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteProvider } from '@/components/site-provider';
+import { AuthRoot } from '@/modules/auth/auth-root';
 import { getSiteConfig } from '@/lib/api/site';
 import { getNavCategories } from '@/lib/api/games';
 import '@/styles/globals.css';
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <SiteHeader />
           <main id="main">{children}</main>
           <SiteFooter />
+          <AuthRoot />
         </SiteProvider>
       </body>
     </html>

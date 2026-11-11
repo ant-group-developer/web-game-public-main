@@ -7,3 +7,4 @@ out/
 .reference/
 *.log
 .npm-cache/
+packages/zozo-sdk/dist/
