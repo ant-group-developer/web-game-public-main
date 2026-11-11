@@ -1,13 +1,15 @@
 /**
- * ZOZO SDK v1 — tài khoản người chơi ZOZO ID và ngôn ngữ cho game chạy trong portal (iframe) hoặc riêng.
+ * ZOZO SDK v1 — tài khoản người chơi ZOZO ID, ngôn ngữ và đo lường (GA4) cho game chạy trong portal (iframe) hoặc riêng.
  *
  *   ZOZO.init({ gameId: 'xiangqi' });
  *   const token = await ZOZO.getToken();   // gửi kèm Authorization: Bearer cho backend game
  *   ZOZO.onAuthChange((player) => …);
  *   ZOZO.onLocale((locale) => …);
+ *   ZOZO.track('match_end', { mode: 'ranked', result: 'win', duration_s: 312, moves: 48 });
  *
  * Trong iframe của portal ZOZO, SDK xin token qua postMessage từ portal (portal là nơi duy nhất refresh
  * phiên — tránh hai bên cùng xoay refresh token). Ngoài iframe (hoặc portal không trả lời) SDK tự gọi API.
+ * Sự kiện đo lường trong portal cũng đi qua portal (một gtag, một phiên GA); chạy riêng thì SDK tự tải gtag.
  */
 import {
   authSignature,
@@ -20,9 +22,21 @@ import {
   type ZozoLocale,
   type ZozoPlayer,
 } from './core';
+import {
+  createGtag,
+  isMeasurementId,
+  loadGtagScript,
+  MAX_ERRORS_PER_SESSION,
+  readConsentCookie,
+  sanitizeTrack,
+  writeConsentCookie,
+  type Consent,
+  type TrackEvent,
+  type TrackParams,
+} from './analytics';
 
 export { ZozoError };
-export type { ZozoLocale, ZozoPlayer };
+export type { Consent, TrackEvent, TrackParams, ZozoLocale, ZozoPlayer };
 
 export interface InitOptions {
   /** Key của game (trùng key trong admin "Game kết nối"), ví dụ `xiangqi`. */
@@ -31,6 +45,23 @@ export interface InitOptions {
   apiBase?: string;
   /** Origin portal (trang đăng nhập khi game chạy riêng), mặc định `https://zozo.bio`. */
   portalUrl?: string;
+  /**
+   * Mã đo lường GA4 (`G-…`) dùng khi game chạy riêng. Không có → `track()` chỉ gửi được khi game nằm trong portal.
+   * Trong portal luôn gửi qua gtag của portal, không dùng mã này.
+   */
+  ga4Id?: string;
+  /** Tự gửi `game_open {load_ms}` và `game_error` (lỗi JS chưa bắt, tối đa 5 / phiên). Mặc định true. */
+  autoTrack?: boolean;
+  /** Ghi `track()` ra console; chạy riêng thì bật thêm `debug_mode` (GA4 DebugView). Hoặc thêm `?ga_debug=1` vào URL. */
+  debug?: boolean;
+}
+
+interface Config {
+  gameId: string;
+  apiBase: string;
+  portalUrl: string;
+  ga4Id: string | null;
+  debug: boolean;
 }
 
 const DEFAULT_API = 'https://api.zozo.bio';
@@ -38,7 +69,7 @@ const DEFAULT_PORTAL = 'https://zozo.bio';
 /** Portal phải trả lời token trong ngần này, không thì SDK tự gọi API. */
 const BRIDGE_TIMEOUT_MS = 4000;
 
-let config: Required<InitOptions> | null = null;
+let config: Config | null = null;
 let session: Session | null = null;
 /** Origin portal cha (đã kiểm tra) khi game nằm trong iframe; null = tự gọi API. */
 let parentOrigin: string | null = null;
@@ -49,6 +80,12 @@ const localeListeners = new Set<(locale: ZozoLocale) => void>();
 let loginWaiters: Array<(changed: boolean) => void> = [];
 let locale: ZozoLocale = 'vi';
 let lastSignature = '';
+/** gtag của chính game (chỉ khi chạy riêng và có `ga4Id`). */
+let gtag: ((...args: unknown[]) => void) | null = null;
+let screen = '';
+let lastLevel: string | number | undefined;
+let errorCount = 0;
+const ERROR_KEY = 'zozo-ga-errors';
 
 function need(): Session {
   if (!session) throw new Error('ZOZO.init({ gameId }) must be called first');
@@ -85,6 +122,7 @@ function emitAuth() {
   const signature = authSignature(s);
   if (signature === lastSignature) return;
   lastSignature = signature;
+  gtagUser();
   authListeners.forEach((cb) => { try { cb(s.player); } catch (error) { console.error(error); } });
 }
 
@@ -165,20 +203,23 @@ function setLocale(next: ZozoLocale) {
 export function init(options: InitOptions): void {
   if (!options?.gameId) throw new Error('ZOZO.init: gameId is required');
   if (config) return;
+  let query: URLSearchParams | null = null;
+  try { query = new URLSearchParams(window.location.search); } catch { /* không có location */ }
   config = {
     gameId: options.gameId,
     apiBase: (options.apiBase || DEFAULT_API).replace(/\/+$/, ''),
     portalUrl: (options.portalUrl || DEFAULT_PORTAL).replace(/\/+$/, ''),
+    ga4Id: isMeasurementId(options.ga4Id) ? options.ga4Id : null,
+    debug: !!options.debug || query?.get('ga_debug') === '1',
   };
   parentOrigin = detectParent();
   // Trong portal: portal refresh thay cho game, SDK không tự hẹn giờ refresh.
   session = swapSession(!parentOrigin);
   lastSignature = authSignature(session.state);
-  try {
-    const lang = new URLSearchParams(window.location.search).get('lang');
-    if (isZozoLocale(lang)) locale = lang;
-  } catch { /* không có location */ }
+  const lang = query?.get('lang');
+  if (isZozoLocale(lang)) locale = lang;
   window.addEventListener('message', onMessage);
+  if (options.autoTrack !== false) autoTrack();
 }
 
 /** Người chơi hiện tại (tự tạo khách nếu chưa có phiên). */
@@ -247,4 +288,115 @@ export function getLocale(): ZozoLocale {
   return locale;
 }
 
-export const version = '1.0.0';
+/* ---------------------------------------------------------------- Đo lường (GA4) */
+
+/**
+ * Gửi một sự kiện chuẩn (bảng trong README). Tên ngoài bảng bị bỏ (console.warn); tham số ngoài bảng / sai kiểu bị bỏ.
+ * Tự gắn `game_id`, `player_type` (guest | member), `locale`, `embed` (portal | direct); `user_id` = id người chơi.
+ * Không bao giờ ném lỗi — đo lường không được làm hỏng game.
+ */
+export function track(event: TrackEvent, params: TrackParams = {}): void {
+  try {
+    const c = config;
+    if (!c) { console.warn('ZOZO.track: call ZOZO.init({ gameId }) first'); return; }
+    const clean = sanitizeTrack(event, params);
+    if (!clean) { console.warn(`ZOZO.track: unknown event "${String(event)}"`); return; }
+    if (clean.dropped.length) console.warn(`ZOZO.track(${clean.event}): dropped params ${clean.dropped.join(', ')}`);
+    if (clean.params.level !== undefined) lastLevel = clean.params.level;
+    const player = session?.state.player;
+    const full = {
+      ...clean.params,
+      game_id: c.gameId,
+      player_type: player && !player.isGuest ? 'member' : 'guest',
+      locale,
+      embed: parentOrigin ? 'portal' : 'direct',
+    };
+    if (c.debug) console.debug('[ZOZO.track]', clean.event, full);
+    if (parentOrigin) { post({ type: 'zozo:track', event: clean.event, params: full }); return; }
+    standaloneGtag()?.('event', clean.event, full);
+  } catch { /* bỏ qua */ }
+}
+
+/** Màn hình hiện tại (vd 'menu', 'lobby', 'match') — gắn vào `game_error` tự động. */
+export function setScreen(name: string): void {
+  screen = typeof name === 'string' ? name.slice(0, 100) : '';
+}
+
+/**
+ * Lựa chọn cookie đo lường (dùng chung với portal qua cookie `zozo_consent` trên *.zozo.bio). null = chưa chọn.
+ */
+export function getConsent(): Consent | null {
+  return readConsentCookie();
+}
+
+/**
+ * Game chạy riêng có banner cookie của mình thì báo lựa chọn ở đây. Chưa chọn (cả ở portal) → SDK chưa tải gtag,
+ * sự kiện chờ trong hàng đợi. Từ chối → vẫn gửi ping ẩn danh (Consent Mode, analytics_storage=denied).
+ * Trong portal: không làm gì (portal hỏi và quyết định).
+ */
+export function setConsent(granted: boolean): void {
+  if (parentOrigin) return;
+  const value: Consent = granted ? 'granted' : 'denied';
+  writeConsentCookie(value);
+  const g = standaloneGtag();
+  if (!g || !config?.ga4Id) return;
+  g('consent', 'update', { analytics_storage: value });
+  loadGtagScript(config.ga4Id);
+}
+
+function gaConfig(): Record<string, unknown> {
+  const id = session?.state.player?.id;
+  return { send_page_view: false, ...(config?.debug ? { debug_mode: true } : {}), ...(id ? { user_id: id } : {}) };
+}
+
+function standaloneGtag() {
+  const c = config;
+  if (gtag || !c?.ga4Id || parentOrigin) return gtag;
+  const consent = readConsentCookie();
+  gtag = createGtag(c.ga4Id, consent, gaConfig());
+  if (consent) loadGtagScript(c.ga4Id);
+  return gtag;
+}
+
+/** Người chơi đổi → cập nhật user_id cho gtag của game (trong portal thì portal lo). */
+function gtagUser() {
+  if (!gtag || !config?.ga4Id || parentOrigin) return;
+  gtag('config', config.ga4Id, { ...gaConfig(), user_id: session?.state.player?.id ?? null });
+}
+
+function autoTrack() {
+  const open = () => {
+    let ms = performance.now();
+    try {
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+      if (nav && nav.loadEventStart > 0) ms = nav.loadEventStart;
+    } catch { /* trình duyệt cũ */ }
+    track('game_open', { load_ms: ms });
+  };
+  if (document.readyState === 'complete') setTimeout(open, 0);
+  else window.addEventListener('load', open, { once: true });
+
+  window.addEventListener('error', (event) => {
+    if (!(event instanceof ErrorEvent)) return;
+    const error = event.error as { name?: unknown; message?: unknown } | null;
+    const type = typeof error?.name === 'string' ? error.name : event.message === 'Script error.' ? 'ScriptError' : 'Error';
+    reportError(type, typeof error?.message === 'string' ? error.message : event.message);
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    const reason = event.reason as unknown;
+    if (reason instanceof Error) reportError(`Rejection:${reason.name}`, reason.message);
+    else reportError('Rejection', typeof reason === 'string' ? reason : '');
+  });
+}
+
+/** Tối đa MAX_ERRORS_PER_SESSION lỗi mỗi phiên (tab), đếm trong sessionStorage. */
+function reportError(type: string, message: string) {
+  let n = errorCount;
+  try { n = Math.max(n, Number(sessionStorage.getItem(ERROR_KEY)) || 0); } catch { /* storage bị chặn */ }
+  if (n >= MAX_ERRORS_PER_SESSION) return;
+  errorCount = n + 1;
+  try { sessionStorage.setItem(ERROR_KEY, String(errorCount)); } catch { /* storage bị chặn */ }
+  track('game_error', { error_type: type, error_message: message, screen: screen || undefined, level: lastLevel });
+}
+
+export const version = '1.1.0';

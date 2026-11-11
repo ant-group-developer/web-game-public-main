@@ -446,6 +446,13 @@ body:has(.page-game) .site-header-inner, body:has(.page-game) .site-footer { wid
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translateX(-50%); } }
 .toast button { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 7px; color: var(--dim); }
 .toast button:hover { color: var(--text); }
+.consent { position: fixed; left: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 55; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px); padding: 10px 10px 10px 16px; border: 1px solid var(--line-hi); border-radius: 12px; background: var(--panel-hi); box-shadow: 0 14px 34px rgb(0 0 0 / .5); font-size: 14px; font-weight: 800; animation: toast-in-left .2s ease-out; }
+.consent > span { flex: 1; min-width: 0; }
+.consent .choice-secondary, .consent .play-button { height: 36px; padding: 0 14px; font-size: 14px; flex-shrink: 0; }
+@keyframes toast-in-left { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 480px) { .consent { right: 16px; flex-wrap: wrap; } .consent > span { flex-basis: 100%; } .consent .choice-secondary, .consent .play-button { flex: 1; } }
+.footer-link { color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.footer-link:hover { color: var(--text); }
 
 @media (max-width: 1100px) {
   .account-name, .account-save-text { display: none; }

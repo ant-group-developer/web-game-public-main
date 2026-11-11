@@ -154,6 +154,10 @@ const vi = {
   'err.name': 'Tên cần 2–24 ký tự.',
   'err.session': 'Phiên đã hết, hãy đăng nhập lại.',
   'err.generic': 'Có lỗi xảy ra, thử lại sau.',
+  'consent.label': 'Cookie',
+  'consent.text': 'Cho phép cookie đo lượt chơi?',
+  'consent.accept': 'Đồng ý',
+  'consent.decline': 'Từ chối',
 };
 
 export type MessageKey = keyof typeof vi;
@@ -306,6 +310,10 @@ const en: Record<MessageKey, string> = {
   'err.name': 'Name must be 2–24 characters.',
   'err.session': 'Session expired — please log in again.',
   'err.generic': 'Something went wrong — try again.',
+  'consent.label': 'Cookie',
+  'consent.text': 'Allow cookies to measure play?',
+  'consent.accept': 'Accept',
+  'consent.decline': 'Decline',
 };
 
 export const dictionary: Record<Locale, Record<MessageKey, string>> = { vi, en };

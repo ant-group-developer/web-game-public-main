@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { createSession, ZozoError, type AuthResult, type Session, type SessionState, type ZozoPlayer } from '@/packages/zozo-sdk/src/core';
 import { readLocale } from '@/hooks/use-locale';
+import { setAnalyticsPlayer, track } from '@/lib/analytics';
 import { ZOZO_API_BASE } from './config';
 import { askGuestChoice, showToast, type GuestChoiceInfo } from './ui';
 
@@ -47,25 +48,43 @@ function signedIn(result: AuthResult) {
  * register / login / google-credential. API trả `choiceRequired` → hỏi người chơi rồi gửi lại đúng request đó
  * kèm `guestChoice`. Đóng hộp thoại → ZozoError `cancelled` (không đăng nhập).
  */
-async function authenticate(path: string, body: Record<string, unknown>): Promise<AuthResult> {
+/** `auto` (Google): API tự tạo tài khoản khi chưa có → đoán theo kết quả, xem `isNewAccount`. */
+type AuthKind = 'login' | 'sign_up' | 'auto';
+
+async function authenticate(path: string, body: Record<string, unknown>, method: 'email' | 'google', kind: AuthKind): Promise<AuthResult> {
   const s = getSession();
+  const before = s.state.player;
+  const done = (result: AuthResult) => {
+    const event = kind === 'sign_up' || (kind === 'auto' && isNewAccount(before, result.player)) ? 'sign_up' : 'login';
+    signedIn(result);
+    setAnalyticsPlayer(result.player, true); // user_id / player_type mới ngay cho sự kiện này
+    track(event, { method });
+    return result;
+  };
   const first = await s.request<LoginResult>(path, { method: 'POST', body, auth: 'optional' });
-  if (!isChoice(first)) return signedIn(first);
+  if (!isChoice(first)) return done(first);
   const guestChoice = await askGuestChoice(first.choiceRequired);
   if (!guestChoice) throw new ZozoError(0, 'cancelled', 'Cancelled');
   const second = await s.request<LoginResult>(path, { method: 'POST', body: { ...body, guestChoice }, auth: 'optional' });
   if (isChoice(second)) throw new ZozoError(0, 'error', 'Unexpected choiceRequired');
-  return signedIn(second);
+  return done(second);
 }
 
-export const loginWithPassword = (email: string, password: string) => authenticate('/auth/login', { email, password });
+/** Khách vừa thành tài khoản (giữ id) hoặc tài khoản vừa được tạo (createdAt trong 2 phút). */
+function isNewAccount(before: ZozoPlayer | null, after: ZozoPlayer) {
+  if (before?.isGuest && before.id === after.id) return true;
+  const created = Date.parse(after.createdAt);
+  return after.id !== before?.id && Number.isFinite(created) && Date.now() - created < 120_000;
+}
+
+export const loginWithPassword = (email: string, password: string) => authenticate('/auth/login', { email, password }, 'email', 'login');
 
 export function register(email: string, password: string, displayName?: string) {
-  return authenticate('/auth/register', { email, password, lang: readLocale(), ...(displayName ? { displayName } : {}) });
+  return authenticate('/auth/register', { email, password, lang: readLocale(), ...(displayName ? { displayName } : {}) }, 'email', 'sign_up');
 }
 
 /** ID token từ Google Identity Services → phiên ZOZO. Cùng `credential` được gửi lại khi phải hỏi gộp khách. */
-export const loginWithGoogle = (credential: string) => authenticate('/auth/google/credential', { credential });
+export const loginWithGoogle = (credential: string) => authenticate('/auth/google/credential', { credential }, 'google', 'auto');
 export const logout = () => getSession().logout();
 
 export const forgotPassword = (email: string) =>

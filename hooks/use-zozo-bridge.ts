@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { authSignature, isTrustedOrigin, ZozoError } from '@/packages/zozo-sdk/src/core';
 import { allowLocalOrigins } from '@/lib/zozo/return-to';
 import { getSession, logout } from '@/lib/zozo/session';
@@ -15,13 +15,22 @@ import { openAuthDialog } from '@/lib/zozo/ui';
  *                                          hoặc { type: 'zozo:token', id, error, status }. Chưa có phiên thì tạo khách.
  *   { type: 'zozo:login', mode? }       → mở hộp thoại đăng nhập trên game; đóng mà không đăng nhập → { type: 'zozo:login-cancel' }
  *   { type: 'zozo:logout' }             → portal đăng xuất
+ *   { type: 'zozo:track', event, params } → sự kiện GA4, portal kiểm tra lại rồi gửi bằng gtag của portal (không trả lời)
  * Portal → game:
  *   { type: 'zozo:auth-changed' }       → người chơi đã đổi (đăng nhập, đăng ký, đăng xuất, đổi tên…): game xin token lại.
  *
  * Portal là nơi duy nhất refresh phiên khi game nằm trong portal (API xoay refresh token mỗi lần dùng,
  * hai bên cùng refresh một lúc sẽ làm mất phiên).
  */
-export function useZozoBridge(iframe: RefObject<HTMLIFrameElement | null>, frameOrigin: string | null) {
+export function useZozoBridge(
+  iframe: RefObject<HTMLIFrameElement | null>,
+  frameOrigin: string | null,
+  /** `{type:'zozo:track', event, params}` từ game (đo lường GA4, không trả lời). */
+  onTrack?: (event: unknown, params: unknown) => void,
+) {
+  const trackRef = useRef(onTrack);
+  useEffect(() => { trackRef.current = onTrack; });
+
   useEffect(() => {
     const session = getSession();
     const allowLocal = allowLocalOrigins();
@@ -36,8 +45,9 @@ export function useZozoBridge(iframe: RefObject<HTMLIFrameElement | null>, frame
     const onMessage = (event: MessageEvent) => {
       const win = iframe.current?.contentWindow;
       if (!win || event.source !== win || !isTrustedOrigin(event.origin, allowLocal)) return;
-      const data = event.data as { type?: unknown; id?: unknown; mode?: unknown } | null;
+      const data = event.data as { type?: unknown; id?: unknown; mode?: unknown; event?: unknown; params?: unknown } | null;
       if (!data || typeof data !== 'object' || typeof data.type !== 'string' || !data.type.startsWith('zozo:')) return;
+      if (data.type === 'zozo:track') { trackRef.current?.(data.event, data.params); return; }
       origin = event.origin;
       talked = true;
       const reply = (message: Record<string, unknown>) => win.postMessage(message, event.origin);
