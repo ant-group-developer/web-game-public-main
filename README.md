@@ -40,6 +40,8 @@ BIND_ADDRESS=0.0.0.0
 APP_IMAGE=ant-play:latest
 TZ=Asia/Ho_Chi_Minh
 SITE_URL=http://localhost:3100
+NEXT_PUBLIC_API_URL=https://api.zozo.bio
+NEXT_PUBLIC_GA4_MEASUREMENT_ID=
 API_INTERNAL_URL=http://host.docker.internal:3000
 REVALIDATE_SECRET=<chuỗi bí mật dùng chung với API>
 ```
@@ -47,6 +49,8 @@ REVALIDATE_SECRET=<chuỗi bí mật dùng chung với API>
 - `API_INTERNAL_URL` (runtime): địa chỉ API mà server Next.js gọi, không kèm `/api/v1`. Trong Docker phải là địa chỉ container truy cập được (`http://api:3000` nếu cùng network, `http://host.docker.internal:3000` nếu API chạy trên host) — `localhost` trong container là chính container web.
 - `REVALIDATE_SECRET` (runtime): phải trùng với `REVALIDATE_SECRET` của API. API gọi `POST /api/revalidate` sau mỗi lần sửa game để portal cập nhật ngay.
 - `SITE_URL` (build): origin công khai cho canonical/Open Graph/sitemap.
+- `NEXT_PUBLIC_API_URL` (build): origin API mà **trình duyệt** gọi để đăng nhập ZOZO ID (không kèm `/api/v1`), vd `https://api.zozo.bio`. Nhúng vào JS lúc build — đổi thì build lại. Trống: production dùng `https://api.zozo.bio`, `npm run dev` dùng `http://localhost:3000`.
+- `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (build): mã đo lường Google Analytics 4 (`G-XXXXXXX`). Nhúng vào JS lúc build — đổi thì build lại. Trống: không tải gtag, không hiện banner cookie. Xem [Đo lường](#đo-lường-google-analytics-4).
 - `APP_PORT`: port truy cập trên server/host. Ví dụ `8080` → `http://IP-SERVER:8080`.
 - `PORT`: port Next.js chạy bên trong container; Docker Compose tự map với `APP_PORT`.
 - `BIND_ADDRESS`: `0.0.0.0` để truy cập qua IP server, hoặc `127.0.0.1` nếu Nginx/Caddy trên cùng host đứng phía trước.
@@ -76,13 +80,52 @@ docker compose --env-file .env.production up -d --build
 
 ```text
 app/                     Trang chủ, /games/[slug], 404, sitemap, robots, /api/revalidate (webhook)
-components/              Header (chỉ logo), footer, thẻ game
+components/              Header (logo, tìm kiếm, ngôn ngữ, tài khoản), footer, thẻ game
 lib/api/games.ts         Lấy danh sách/chi tiết game từ API (cache theo tag `games`, `game:<slug>`)
 modules/home/            Banner game nổi bật, "Chơi gần đây" (localStorage)
 modules/games/           Trang chơi: iframe tự tải, thanh tên + toàn màn hình dưới khung, "Chơi thêm"
 public/games/            Ảnh bìa có sẵn của các game ban đầu (CMS có thể trỏ tới hoặc dùng ảnh upload)
 public/apple-worm/       Bản Apple Worm đi kèm (route /embed/apple-worm)
+lib/zozo/                Phiên ZOZO ID phía trình duyệt, Google Identity Services, returnTo
+modules/auth/            /dang-nhap, /quen-mat-khau, /dat-lai-mat-khau, /ho-so, hộp thoại đăng nhập
+hooks/use-zozo-bridge.ts Cầu nối postMessage cho game trong iframe
+lib/analytics.ts         Google Analytics 4 (Consent Mode v2, sự kiện portal + chuyển tiếp sự kiện game)
+packages/zozo-sdk/       SDK cho game (ESM + IIFE `window.ZOZO`), xem README trong thư mục
 ```
+
+## Tài khoản người chơi (ZOZO ID)
+
+Một tài khoản dùng chung cho portal và mọi game. API: `web-game-server` (`docs/zozo-id-api.md`).
+
+- Vào trang, trình duyệt gọi `POST /auth/refresh` (cookie `zozo_rt`) để biết người chơi. **Không** tự tạo khách khi chỉ xem trang; khách chỉ được tạo khi game trong iframe xin token.
+- Access token chỉ giữ trong bộ nhớ, tự refresh trước khi hết hạn; refresh chạy một lần tại một thời điểm và khoá giữa các tab (API xoay refresh token mỗi lần dùng).
+- Đăng nhập: Google là chính (nút chính thức + One Tap của Google Identity Services, chỉ tải ở `/dang-nhap` và hộp thoại đăng nhập). Client ID lấy từ `GET /auth/config`; `null` thì ẩn Google, chỉ còn email. Email/mật khẩu nằm dưới "Hoặc dùng email". Đang là khách mà đăng nhập / đăng ký (cả Google): API trả `choiceRequired` → hộp thoại "Gộp tiến trình?" → gửi lại đúng request kèm `guestChoice` (`merge`: khách vào tài khoản, hiện thông báo nhỏ; `separate`: tài khoản dùng id riêng, khách giữ nguyên). Đóng hộp thoại = huỷ đăng nhập.
+- Trang: `/dang-nhap` (`?tab=dang-ky`, `?returnTo=` — chỉ cùng origin, `https://*.zozo.bio`, hoặc `http://localhost:*` khi chạy local), `/quen-mat-khau`, `/dat-lai-mat-khau?token=`, `/ho-so`.
+- Header: chưa có phiên → "Đăng nhập"; khách → "Lưu tiến trình" + avatar; tài khoản → avatar + tên, menu Hồ sơ / Đăng xuất.
+
+### Cầu nối với game trong iframe
+
+Portal chỉ nhận message từ đúng iframe game, origin khớp `^https://([a-z0-9-]+\.)?zozo\.bio$` (dev hoặc portal chạy trên localhost: thêm `http://localhost:*`). Message `ant-play:locale` giữ nguyên như cũ.
+
+| Hướng | Message | Ý nghĩa |
+|---|---|---|
+| game → portal | `{type:'zozo:token-request', id}` | Xin access token. Portal trả `{type:'zozo:token', id, accessToken, expiresIn, player}` hoặc `{type:'zozo:token', id, error, status}`; chưa có phiên thì tạo khách. |
+| game → portal | `{type:'zozo:login', mode?}` (`login` / `register`) | Mở hộp thoại đăng nhập trên game. Đóng mà không đăng nhập → `{type:'zozo:login-cancel'}`. |
+| game → portal | `{type:'zozo:logout'}` | Portal đăng xuất. |
+| game → portal | `{type:'zozo:track', event, params}` | Sự kiện GA4 của game (không trả lời). Xem [Đo lường](#đo-lường-google-analytics-4). |
+| portal → game | `{type:'zozo:auth-changed'}` | Người chơi đổi (đăng nhập / đăng ký / đăng xuất / đổi tên): game xin token lại. |
+
+Game trong portal không tự refresh mà xin token qua cầu nối, để portal là nơi duy nhất xoay refresh token. SDK làm sẵn việc này: `packages/zozo-sdk` (`npm run build:sdk`).
+
+## Đo lường (Google Analytics 4)
+
+Chỉ bật khi build có `NEXT_PUBLIC_GA4_MEASUREMENT_ID`; không có thì mọi thứ không làm gì. Cài đặt GA4 / BigQuery / Looker Studio: [ANALYTICS-SETUP.md](./ANALYTICS-SETUP.md).
+
+- **Consent Mode v2**: mặc định `denied`. Banner nhỏ ở góc dưới; gtag.js chỉ tải sau khi người chơi chọn. Đồng ý → `analytics_storage=granted`; Từ chối → `denied` (GA chỉ nhận ping ẩn danh, không cookie). Lựa chọn lưu ở `localStorage` + cookie `zozo_consent` (trên `*.zozo.bio` ghi cho cả domain để game chạy riêng dùng chung). Link "Cookie" ở footer mở lại banner.
+- **Sự kiện portal**: `page_view` (mỗi lần đổi trang), `game_open {load_ms}` khi iframe game tải xong (cùng mốc bắt đầu đếm `/api/play`), `sign_up` / `login` `{method: email|google}`.
+- **Sự kiện game**: game dùng ZOZO SDK gửi `zozo:track`; portal kiểm tra nguồn như các message khác, kiểm tra lại tên / tham số theo bảng chuẩn (`packages/zozo-sdk/src/analytics.ts`) rồi gửi bằng gtag của portal — một gtag, một phiên GA.
+- Mọi sự kiện có `game_id` (slug game trên portal), `player_type` (`guest` \| `member`), `locale`, `embed`; `user_id` = id người chơi ZOZO ID.
+- Dev: `NEXT_PUBLIC_GA4_DEBUG=1` khi `npm run dev` → ghi mọi sự kiện ra console (kể cả khi chưa có mã). Thêm `?ga_debug=1` vào URL → `debug_mode` để xem trong GA4 DebugView.
 
 ## Game
 

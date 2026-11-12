@@ -8,6 +8,8 @@ import type { Game } from '@/types/game';
 import { addRecentGame } from '@/hooks/use-recent';
 import { readLocale, useT } from '@/hooks/use-locale';
 import { usePlayTracking } from '@/hooks/use-play-tracking';
+import { useZozoBridge } from '@/hooks/use-zozo-bridge';
+import { createGameTracker } from '@/lib/analytics';
 import type { Locale } from '@/constants/i18n';
 
 /**
@@ -24,6 +26,9 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
   const [reloadKey, setReloadKey] = useState(0);
   // Ngôn ngữ ghi vào URL iframe lúc mở. Đổi ngôn ngữ sau đó thì gửi postMessage, không tải lại game.
   const [frameLocale, setFrameLocale] = useState<Locale>(readLocale);
+  // GA4: game_open + sự kiện game gửi qua zozo:track, tính theo từng lần tải iframe.
+  const [tracker, setTracker] = useState(() => createGameTracker(game.slug));
+  const loadStart = useRef(0);
 
   // Build the URL on the client so games that verify postMessage get the portal's real origin.
   const origin = useSyncExternalStore(noopSubscribe, () => window.location.origin, () => null);
@@ -32,6 +37,9 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
 
   useEffect(() => { addRecentGame(game.slug); }, [game.slug]);
   usePlayTracking(game.slug, loaded);
+  // Game dùng ZOZO SDK xin token / mở đăng nhập qua postMessage.
+  useZozoBridge(iframe, frameOrigin, tracker.fromGame);
+  useEffect(() => { loadStart.current = performance.now(); }, [src, reloadKey]);
 
   // Game hỗ trợ đổi ngôn ngữ (bật trong admin) nghe { type: 'ant-play:locale' } và đổi ngay, không tải lại.
   useEffect(() => {
@@ -50,7 +58,7 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
     if (el?.requestFullscreen) void el.requestFullscreen().then(() => iframe.current?.focus({ preventScroll: true })).catch(() => {});
     else if (src) window.open(src, '_blank', 'noopener'); // iPhone Safari: no element fullscreen
   }
-  function reload() { setLoaded(false); setFrameLocale(locale); setReloadKey((k) => k + 1); }
+  function reload() { setLoaded(false); setFrameLocale(locale); setReloadKey((k) => k + 1); setTracker(createGameTracker(game.slug)); }
   function toggleMode() {
     onToggleMode();
     // Giữ bàn phím trong game sau khi bấm nút.
@@ -80,7 +88,7 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
             allow={game.iframeAllow.length ? game.iframeAllow.join('; ') : undefined}
             sandbox={game.iframeSandbox ?? undefined}
             allowFullScreen
-            onLoad={() => { setLoaded(true); iframe.current?.focus({ preventScroll: true }); }}
+            onLoad={() => { setLoaded(true); tracker.frameLoaded(performance.now() - loadStart.current); iframe.current?.focus({ preventScroll: true }); }}
           />
         )}
         {!loaded && (

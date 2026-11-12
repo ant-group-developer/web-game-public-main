@@ -8,6 +8,10 @@ services:
       dockerfile: Dockerfile
       args:
         SITE_URL: ${SITE_URL:-http://localhost:3100}
+        # API ZOZO ID mà trình duyệt gọi để đăng nhập (nhúng vào JS lúc build). Trống → https://api.zozo.bio.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+        # Mã đo lường GA4 (G-XXXXXXX), nhúng vào JS lúc build. Trống → không có Google Analytics.
+        NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${NEXT_PUBLIC_GA4_MEASUREMENT_ID:-}
         # Để bước build dựng sẵn trang bằng dữ liệu thật (thiếu thì trang chủ sau deploy trống tới khi làm mới).
         API_INTERNAL_URL: ${API_INTERNAL_URL:-}
     init: true
@@ -30,6 +34,8 @@ services:
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:-}
       # API_LOG=1: ghi log mọi lần gọi API vào `docker logs` (lỗi thì luôn ghi).
       API_LOG: ${API_LOG:-}
+      # Domain ảnh trên Cloudflare R2 (vd https://assets.zozo.bio) — chỉ để preconnect, không bắt buộc.
+      ASSETS_ORIGIN: ${ASSETS_ORIGIN:-}
     stop_grace_period: 20s
     logging:
       driver: json-file

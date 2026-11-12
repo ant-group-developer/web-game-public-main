@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useT } from '@/hooks/use-locale';
+import { AccountMenu } from './account-menu';
 import { CategoryNav } from './category-nav';
 import { LanguageSwitcher } from './language-switcher';
 import { SearchBox } from './search-box';
@@ -19,7 +20,7 @@ function BrandName({ name }: { name: string }) {
   );
 }
 
-/** Header: logo trái, ô tìm game giữa, chọn ngôn ngữ phải; hàng chip danh mục bên dưới. */
+/** Header: logo trái, ô tìm game giữa, chọn ngôn ngữ + tài khoản ZOZO phải; hàng chip danh mục bên dưới. */
 export function SiteHeader() {
   const { t } = useT();
   const { siteName, logoUrl } = useSite();
@@ -32,7 +33,10 @@ export function SiteHeader() {
           <BrandName name={siteName} />
         </Link>
         <SearchBox />
-        <LanguageSwitcher />
+        <div className="header-end">
+          <LanguageSwitcher />
+          <AccountMenu />
+        </div>
       </div>
       <CategoryNav />
     </header>

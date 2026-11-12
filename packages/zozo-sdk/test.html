@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZOZO SDK test</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; padding: 16px; background: #111219; color: #f7f3ea; font: 14px/1.4 system-ui, sans-serif; }
+    h1 { margin: 0 0 4px; font-size: 18px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    button { height: 34px; padding: 0 12px; border: 1px solid #494066; border-radius: 8px; background: #1b1b27; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+    button:hover { border-color: #e8fc77; color: #e8fc77; }
+    #state { padding: 10px; border-radius: 8px; background: #1b1b27; white-space: pre-wrap; word-break: break-all; }
+    #log { max-height: 260px; overflow: auto; margin: 0; padding: 10px; border-radius: 8px; background: #000; color: #aaa8ba; font: 12px/1.5 ui-monospace, monospace; white-space: pre-wrap; word-break: break-all; }
+    small { color: #aaa8ba; }
+  </style>
+</head>
+<body>
+  <!--
+    Trang thử SDK với API local. Chạy:
+      npm run build:sdk
+      npm run sdk:serve        → http://localhost:3124/test.html?api=http://localhost:3010&portal=http://localhost:3123
+    Mở riêng (standalone) hoặc nhúng trong portal (iframe) để thử cầu nối postMessage.
+  -->
+  <h1>ZOZO SDK test</h1>
+  <small id="mode"></small>
+  <div class="row">
+    <button id="player">getPlayer()</button>
+    <button id="token">getToken()</button>
+    <button id="token2">getToken() ×3 song song</button>
+    <button id="login">login()</button>
+    <button id="register">login({mode:'register'})</button>
+    <button id="logout">logout()</button>
+  </div>
+  <div id="state">—</div>
+  <p><small>Locale: <b id="locale">?</b></small></p>
+  <div class="row">
+    <button id="t-match">track match_start/end</button>
+    <button id="t-level">track level_start/fail/end</button>
+    <button id="t-feature">track feature_use</button>
+    <button id="t-bad">track sai tên / tham số</button>
+    <button id="t-error">throw Error</button>
+    <button id="t-reject">unhandled rejection</button>
+    <button id="c-yes">setConsent(true)</button>
+    <button id="c-no">setConsent(false)</button>
+    <button id="dl">dataLayer</button>
+  </div>
+  <pre id="log"></pre>
+  <script src="./dist/zozo-sdk.js"></script>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const apiBase = q.get('api') || 'http://localhost:3010';
+    const portalUrl = q.get('portal') || 'http://localhost:3123';
+    const $ = (id) => document.getElementById(id);
+    const log = (...args) => { $('log').textContent = `${new Date().toLocaleTimeString()} ${args.map((a) => typeof a === 'string' ? a : JSON.stringify(a)).join(' ')}\n` + $('log').textContent; };
+    const show = (player) => { $('state').textContent = player ? `${player.displayName} (${player.isGuest ? 'khách' : 'tài khoản'}) · ${player.code} · ${player.email ?? '—'}\nid ${player.id}` : 'chưa có phiên'; };
+    const run = (fn) => async () => { try { log('→', await fn()); } catch (e) { log('✗', e.code || '', e.message); } };
+
+    // ?ga4=G-XXXX → gtag riêng khi chạy standalone (trong portal luôn đi qua portal).
+    ZOZO.init({ gameId: 'sdk-test', apiBase, portalUrl, ga4Id: q.get('ga4') || undefined, debug: true });
+    $('mode').textContent = `${window.parent !== window ? 'iframe' : 'standalone'} · api ${apiBase} · portal ${portalUrl} · SDK ${ZOZO.version} · consent ${ZOZO.getConsent() ?? '—'}`;
+    ZOZO.setScreen('test');
+    ZOZO.onAuthChange((p) => { log('onAuthChange', p && { id: p.id, name: p.displayName, guest: p.isGuest }); show(p); });
+    ZOZO.onLocale((l) => { $('locale').textContent = l; log('onLocale', l); });
+
+    $('player').onclick = run(async () => { const p = await ZOZO.getPlayer(); show(p); return p; });
+    $('token').onclick = run(async () => { const t = await ZOZO.getToken(); return t.slice(0, 24) + '…'; });
+    $('token2').onclick = run(async () => { const all = await Promise.all([ZOZO.getToken(), ZOZO.getToken(), ZOZO.getToken()]); return `${new Set(all).size} token khác nhau`; });
+    $('login').onclick = run(async () => { const p = await ZOZO.login(); show(p); return p && p.displayName; });
+    $('register').onclick = run(async () => { const p = await ZOZO.login({ mode: 'register' }); show(p); return p && p.displayName; });
+    $('logout').onclick = run(async () => { await ZOZO.logout(); return 'logged out'; });
+    const tr = (event, params) => { ZOZO.track(event, params); log('track', event, params); };
+    $('t-match').onclick = () => {
+      tr('match_start', { mode: 'bot', bot_level: 3, move_time_s: 30 });
+      tr('match_end', { mode: 'bot', bot_level: 3, move_time_s: 30, result: 'win', reason: 'checkmate', duration_s: 312.5, moves: 48 });
+    };
+    $('t-level').onclick = () => {
+      tr('level_start', { level: 7 });
+      tr('level_fail', { level: 7, duration_s: 41, attempts: 1, fail_reason: 'no_moves' });
+      tr('level_end', { level: 7, duration_s: 95, attempts: 2 });
+    };
+    $('t-feature').onclick = () => tr('feature_use', { feature: 'draw_offer' });
+    $('t-bad').onclick = () => { tr('made_up_event', {}); tr('match_end', { result: 'win', score: 10, game_id: 'hack', moves: 'many' }); };
+    $('t-error').onclick = () => { setTimeout(() => { throw new TypeError('test error'); }); log('throw TypeError'); };
+    $('t-reject').onclick = () => { Promise.reject(new Error('test rejection')); log('unhandled rejection'); };
+    $('c-yes').onclick = () => { ZOZO.setConsent(true); log('consent', ZOZO.getConsent()); };
+    $('c-no').onclick = () => { ZOZO.setConsent(false); log('consent', ZOZO.getConsent()); };
+    $('dl').onclick = () => log('dataLayer', (window.dataLayer || []).map((a) => Array.from(a)));
+    ZOZO.getPlayer().then(show, (e) => log('✗ init', e.code, e.message));
+  </script>
+</body>
+</html>
