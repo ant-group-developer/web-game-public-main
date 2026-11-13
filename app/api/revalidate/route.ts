@@ -12,7 +12,7 @@ import { revalidateTag } from 'next/cache';
  */
 export const dynamic = 'force-dynamic';
 
-const TAG_PATTERN = /^(games|categories|site-config|(?:game|category):[a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const TAG_PATTERN = /^(games|categories|site-config|announcements|(?:game|category):[a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const MAX_TAGS = 50;
 
 function isAuthorized(header: string | null) {

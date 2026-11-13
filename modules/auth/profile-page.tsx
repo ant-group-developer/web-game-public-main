@@ -10,8 +10,9 @@ import { errorKey } from '@/lib/zozo/errors';
 import { logout, updateDisplayName, useZozo } from '@/lib/zozo/session';
 import { openAuthDialog } from '@/lib/zozo/ui';
 import { Field } from './auth-form';
+import { ProfileBadges } from './profile-badges';
 
-/** /ho-so — tên hiển thị, email, mã người chơi. */
+/** /ho-so — tên hiển thị, email, mã người chơi, danh hiệu. */
 export function ProfilePage() {
   const { t } = useT();
   const { ready, player } = useZozo();
@@ -27,7 +28,14 @@ export function ProfilePage() {
     );
   } else body = <ProfileForm key={player.id} player={player} />;
 
-  return <div className="page auth-page"><div className="auth-card">{body}</div></div>;
+  return (
+    <div className="page auth-page">
+      <div className="profile-col">
+        <div className="auth-card">{body}</div>
+        {ready && player && <ProfileBadges playerId={player.id} />}
+      </div>
+    </div>
+  );
 }
 
 function ProfileForm({ player }: { player: ZozoPlayer }) {

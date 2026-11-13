@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const listed = categories.filter((c) => c.gameCount > 0);
   return [
     { url: absoluteUrl('/'), changeFrequency: 'weekly', priority: 1 },
+    { url: absoluteUrl('/su-kien'), changeFrequency: 'daily', priority: 0.6 },
     ...(listed.length ? [{ url: absoluteUrl('/categories'), changeFrequency: 'weekly' as const, priority: 0.7 }] : []),
     ...listed.map((c) => ({
       url: absoluteUrl('/categories/' + c.slug),

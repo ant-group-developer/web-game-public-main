@@ -7,6 +7,8 @@ import type { Game } from '@/types/game';
 import { useT } from '@/hooks/use-locale';
 import { useStored } from '@/hooks/use-stored';
 import { Breadcrumb } from '@/components/breadcrumb';
+import type { Announcement } from '@/types/announcement';
+import { GameEventBar } from './game-event-bar';
 import { GamePlayer } from './game-player';
 import { GameHeadline } from './game-headline';
 import { GameComments } from './game-comments';
@@ -21,7 +23,7 @@ const MODE_KEY = 'ant-player-mode';
  * - Ngang (theater): khung game tràn hết bề ngang; bên dưới là tương tác + bình luận (trái) và game liên quan (phải).
  * Khung game luôn nằm cùng một chỗ trong DOM (chỉ đổi lưới CSS) nên đổi chế độ không tải lại game.
  */
-export function GameDetail({ game, related }: { game: Game; related: Game[] }) {
+export function GameDetail({ game, related, events = [] }: { game: Game; related: Game[]; events?: Announcement[] }) {
   const { locale, t } = useT();
   const text = game.text[locale];
   const [mode, setMode] = useStored<PlayerMode>(MODE_KEY, 'default');
@@ -46,6 +48,7 @@ export function GameDetail({ game, related }: { game: Game; related: Game[] }) {
       <Breadcrumb items={[...(primary ? [{ label: primary.name[locale], href: `/categories/${primary.slug}` }] : []), { label: text.title }]} />
       <div className="game-layout">
         <div className="game-stage">
+          <GameEventBar slug={game.slug} items={events} />
           <GamePlayer key={game.slug} game={game} theater={theater} onToggleMode={toggleMode} />
         </div>
 
