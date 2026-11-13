@@ -13,13 +13,15 @@ import { pickText } from '@/types/site';
 import { matchGame, useSearch } from '@/hooks/use-search';
 import { useSort } from '@/hooks/use-sort';
 import { gameMeta, sortGames } from '@/helpers/games';
+import type { Announcement } from '@/types/announcement';
+import { EventsStrip } from './events-strip';
 import { HeroCarousel } from './hero-carousel';
 import { RecentGames } from './recent-games';
 
 const HOME_SORTS: readonly GameSort[] = ['popular', 'newest', 'plays', 'name'];
 const MAX_TILES = 10;
 
-export function HomeContent({ games, categories }: { games: Game[]; categories: Category[] }) {
+export function HomeContent({ games, categories, events = [] }: { games: Game[]; categories: Category[]; events?: Announcement[] }) {
   const { t, locale } = useT();
   const { siteName, tagline } = useSite();
   const query = useSearch();
@@ -30,6 +32,7 @@ export function HomeContent({ games, categories }: { games: Game[]; categories: 
     <div className="page">
       <h1 className="sr-only">{siteName} — {pickText(tagline, locale)}</h1>
       {games.length > 0 && <HeroCarousel games={games} />}
+      <EventsStrip items={events} />
 
       {tiles.length > 0 && (
         <section aria-labelledby="home-categories" className="section">

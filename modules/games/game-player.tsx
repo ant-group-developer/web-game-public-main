@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { Suspense, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, Columns2, Maximize, Minimize, RectangleHorizontal, RotateCcw } from 'lucide-react';
 import type { Game } from '@/types/game';
 import { addRecentGame } from '@/hooks/use-recent';
@@ -32,7 +33,9 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
 
   // Build the URL on the client so games that verify postMessage get the portal's real origin.
   const origin = useSyncExternalStore(noopSubscribe, () => window.location.origin, () => null);
-  const src = origin ? embedSrc(game, origin, frameLocale) : null;
+  // `?p=/su-kien/x` (thẻ sự kiện, thanh sự kiện): mở thẳng trang đó trong game. Chờ đọc xong mới tạo iframe (tránh tải 2 lần).
+  const [inGame, setInGame] = useState<{ ready: boolean; path: string | null }>({ ready: false, path: null });
+  const src = origin && inGame.ready ? embedSrc(game, origin, frameLocale, inGame.path) : null;
   const frameOrigin = src ? new URL(src).origin : null;
 
   useEffect(() => { addRecentGame(game.slug); }, [game.slug]);
@@ -71,6 +74,9 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
 
   return (
     <section className="player-wrap" aria-label={t('play.game', { title: text.title })}>
+      <Suspense fallback={null}>
+        <InGamePath onChange={(path) => setInGame((cur) => (cur.ready && cur.path === path ? cur : { ready: true, path }))} />
+      </Suspense>
       <div className="player-bar-mobile">
         <Link href="/" className="icon-btn" aria-label={t('play.back')}><ArrowLeft size={22} /></Link>
         <Image src={game.image} alt="" width={34} height={34} unoptimized />
@@ -119,8 +125,22 @@ export function GamePlayer({ game, theater, onToggleMode }: { game: Game; theate
 
 const noopSubscribe = () => () => {};
 
-function embedSrc(game: Game, origin: string, locale: Locale) {
-  const url = new URL(game.embedUrl, origin);
+/** Đường dẫn trong game hợp lệ: bắt đầu bằng một "/", không phải "//" hay URL đầy đủ. */
+export const IN_GAME_PATH = /^\/(?!\/)[A-Za-z0-9\-._~!$&'()*+,;=:@/%]{0,299}$/;
+
+/** Đọc `?p=` (cần Suspense vì trang game được dựng sẵn). */
+function InGamePath({ onChange }: { onChange: (path: string | null) => void }) {
+  const p = useSearchParams().get('p');
+  const path = p && IN_GAME_PATH.test(p) ? p : null;
+  useEffect(() => onChange(path), [path, onChange]);
+  return null;
+}
+
+function embedSrc(game: Game, origin: string, locale: Locale, path: string | null = null) {
+  const base = new URL(game.embedUrl, origin);
+  // Chỉ thay đường dẫn (cùng origin với game), giữ tham số gốc của link nhúng.
+  const url = path ? new URL(path, base.origin) : base;
+  if (path) base.searchParams.forEach((v, k) => url.searchParams.set(k, v));
   if (game.supportsLocale) url.searchParams.set('lang', locale);
   if (game.passParentOrigin) url.searchParams.set('parentOrigin', origin);
   return url.toString();

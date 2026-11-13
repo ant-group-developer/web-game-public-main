@@ -4,6 +4,7 @@ import { getGameBySlug, getGames, resolveRedirect } from '@/lib/api/games';
 import { getSiteConfig } from '@/lib/api/site';
 import type { SiteConfig } from '@/types/site';
 import { GameDetail } from '@/modules/games/game-detail';
+import { getAnnouncements } from '@/lib/api/announcements';
 import { absoluteUrl } from '@/helpers/seo';
 import { relatedGames } from '@/helpers/games';
 import type { Game } from '@/types/game';
@@ -55,7 +56,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [game, games, site] = await Promise.all([getGameBySlug(slug), getGames(), getSiteConfig()]);
+  const [game, games, site, events] = await Promise.all([
+    getGameBySlug(slug),
+    getGames(),
+    getSiteConfig(),
+    getAnnouncements({ status: ['live', 'open'], game: slug, limit: 5 }),
+  ]);
   if (!game) {
     // Slug cũ (đã đổi trong admin) → 301 sang slug mới để giữ link và SEO.
     const target = await resolveRedirect('game', slug);
@@ -93,5 +99,5 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   ];
   // Escape "<" để nội dung từ CMS không thể đóng thẻ </script>.
   const jsonLd = JSON.stringify(data).replace(/</g, '\\u003c');
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /><GameDetail game={game} related={relatedGames(game, games)} /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /><GameDetail game={game} related={relatedGames(game, games)} events={events} /></>;
 }
